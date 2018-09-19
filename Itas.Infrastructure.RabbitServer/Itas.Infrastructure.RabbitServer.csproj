@@ -1,0 +1,21 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>netstandard2.0</TargetFramework>
+    <AssemblyName>Itas.Infrastructure.RabbitServer</AssemblyName>
+    <RootNamespace>Itas.Infrastructure.RabbitServer</RootNamespace>
+    <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
+    <IncludeSymbols>true</IncludeSymbols>
+  </PropertyGroup>
+
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
+    <DocumentationFile>C:\projects\Itas.Infrastructure.RabbitServer\Itas.Infrastructure.RabbitServer\Itas.Infrastructure.RabbitServer.xml</DocumentationFile>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Itas.Infrastructure.Context" Version="1.3.3" />
+    <PackageReference Include="RabbitMQ.Client" Version="5.1.0" />
+    <PackageReference Include="SimpleFactory.Contract" Version="1.2.0" />
+  </ItemGroup>
+
+</Project>

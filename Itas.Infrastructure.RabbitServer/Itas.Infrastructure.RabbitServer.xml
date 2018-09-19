@@ -1,0 +1,67 @@
+<?xml version="1.0"?>
+<doc>
+    <assembly>
+        <name>Itas.Infrastructure.RabbitServer</name>
+    </assembly>
+    <members>
+        <member name="T:Itas.Infrastructure.RabbitServer.Server">
+            <summary>
+            
+            </summary>
+        </member>
+        <member name="M:Itas.Infrastructure.RabbitServer.Server.#ctor(SimpleFactory.Contract.IContainer,Itas.Infrastructure.RabbitServer.ServerConfig.ConectionInfo,System.Action{Itas.Infrastructure.RabbitServer.ServerConfig})">
+            <summary>
+            
+            </summary>
+            <param name="container"></param>
+            <param name="connectionInfo"></param>
+            <param name="config"></param>
+        </member>
+        <member name="M:Itas.Infrastructure.RabbitServer.Server.Start">
+            <summary>
+            
+            </summary>
+        </member>
+        <member name="M:Itas.Infrastructure.RabbitServer.Server.Verify">
+            <summary>
+            Will try to create all instances of handlers to ensure all registration is OK
+            </summary>
+        </member>
+        <member name="T:Itas.Infrastructure.RabbitServer.ServerConfig">
+            <summary>
+            Configures the server...
+            </summary>
+        </member>
+        <member name="M:Itas.Infrastructure.RabbitServer.ServerConfig.#ctor">
+            <summary>
+            
+            </summary>
+        </member>
+        <member name="M:Itas.Infrastructure.RabbitServer.ServerConfig.#ctor(Itas.Infrastructure.RabbitServer.ServerConfig.ConectionInfo)">
+            <summary>
+            
+            </summary>
+            <param name="connectionInfo"></param>
+        </member>
+        <member name="F:Itas.Infrastructure.RabbitServer.ServerConfig.connectionInfo">
+            <summary>
+            
+            </summary>
+        </member>
+        <member name="M:Itas.Infrastructure.RabbitServer.ServerConfig.RegisterCustomBinding``1(System.String)">
+            <summary>
+            
+            </summary>
+            <typeparam name="T"></typeparam>
+            <param name="bindingKey"></param>
+            <returns></returns>
+        </member>
+        <member name="M:Itas.Infrastructure.RabbitServer.ServerConfig.RegisterBinding``1">
+            <summary>
+            Expects that the container contains an IEventHandler/<T/> registration
+            </summary>
+            <typeparam name="T"></typeparam>
+            <returns></returns>
+        </member>
+    </members>
+</doc>
