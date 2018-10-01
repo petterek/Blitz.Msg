@@ -1,0 +1,55 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+    <title>What does this do?</title>
+</head>
+<body>
+    <h1 id="what-does-this-do">What does this do?</h1>
+<p>It creates the infrastructure for reciving messages from RabbitMq.
+Also handles faild messages, they are posted to an Dead Letter Queue,</p>
+<h1 id="workflow-of-the-rabbitserver">Workflow of the RabbitServer</h1>
+<ul>
+<li>Create connection</li>
+<li>Creat channel for AdminUse</li>
+<li>Create exchange if not exist(operation is idempotent)</li>
+<li>Create &quot;Dead Letter Exchang&quot; for the exchange</li>
+<li>Create &quot;Dead Letter Queue&quot; for this process and attach to &quot;Dead Letter Exchange&quot;</li>
+<li>Create queue for all registerd handlers, if not exists(operation is idempotent)
+** Attached queue to exchange from step 3
+** Start to listen to messages from queue</li>
+</ul>
+<h2 id="incomming-type-safe-messages-is-handled-in-this-way">Incomming type safe messages is handled in this way.</h2>
+<ul>
+<li>Get the routing key for the message</li>
+<li>Deserialize the message to the type matching the routing key</li>
+<li>Create instance of handler assosiated with the message, using the container provided.</li>
+<li>Invoke the Handle method on the instance with the message</li>
+<li>ACK is sendt to rabbit, this removes the message from the queue;</li>
+</ul>
+<h2 id="incomming-wildcard-routings">Incomming wildcard routings</h2>
+<ul>
+<li>Create a generic message with the body as string.</li>
+<li>Instanciate the handler that was registerd with routing key</li>
+<li>Call the Handle method</li>
+<li>ACK is sendt to rabbit, this removes the message from the queue;</li>
+</ul>
+<h2 id="when-handling-fails">When handling fails</h2>
+<ul>
+<li>Create a HandlingOfEventFaild message.</li>
+<li>Push this to the configured &quot;Dead Letter Exchange&quot; with the routing key = &quot;_&quot;</li>
+<li>All faild message hanling will accumelated in the same queue for the same &quot;ClientName&quot;</li>
+</ul>
+
+    <script>
+        var config = {
+            startOnLoad: true,
+            flowchart:{
+                htmlLabels: false,
+                useMaxWidth: true
+            },
+            width: "800px "
+        };
+        mermaid.initialize(config);
+    </script>
+</body>
+</html>

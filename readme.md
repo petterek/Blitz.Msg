@@ -1,4 +1,12 @@
-﻿# Workflow of the RabbitServer
+﻿# What does this do?
+
+It creates the infrastructure for reciving messages from RabbitMq. 
+Also handles faild messages, they are posted to an Dead Letter Queue, 
+
+
+
+
+# Workflow of the RabbitServer
 
 * Create connection
 * Creat channel for AdminUse
@@ -30,4 +38,3 @@
 * Push this to the configured "Dead Letter Exchange" with the routing key = "{ClientName}_{HandlingOfEventFaild}"
 * All faild message hanling will accumelated in the same queue for the same "ClientName"
 
- 

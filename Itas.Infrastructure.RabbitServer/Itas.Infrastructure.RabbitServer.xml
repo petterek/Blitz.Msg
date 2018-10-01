@@ -4,64 +4,92 @@
         <name>Itas.Infrastructure.RabbitServer</name>
     </assembly>
     <members>
-        <member name="T:Itas.Infrastructure.RabbitServer.Server">
+        <member name="T:Itas.Infrastructure.RabbitServer.MessageHandlerEngine">
             <summary>
             
             </summary>
         </member>
-        <member name="M:Itas.Infrastructure.RabbitServer.Server.#ctor(SimpleFactory.Contract.IContainer,Itas.Infrastructure.RabbitServer.ServerConfig.ConectionInfo,System.Action{Itas.Infrastructure.RabbitServer.ServerConfig})">
+        <member name="M:Itas.Infrastructure.RabbitServer.MessageHandlerEngine.#ctor(System.Func{System.Type,System.Object,System.Object},Itas.Infrastructure.RabbitServer.IMessageAdapter)">
             <summary>
             
             </summary>
-            <param name="container"></param>
-            <param name="connectionInfo"></param>
-            <param name="config"></param>
+            <param name="handlerCreator"></param>
+            <param name="producer"></param>
         </member>
-        <member name="M:Itas.Infrastructure.RabbitServer.Server.Start">
+        <member name="M:Itas.Infrastructure.RabbitServer.MessageHandlerEngine.HandleTypedMessages(System.Object,System.Object)">
             <summary>
             
             </summary>
+            <param name="message"></param>
+            <param name="context"></param>
         </member>
-        <member name="M:Itas.Infrastructure.RabbitServer.Server.Verify">
-            <summary>
-            Will try to create all instances of handlers to ensure all registration is OK
-            </summary>
-        </member>
-        <member name="T:Itas.Infrastructure.RabbitServer.ServerConfig">
-            <summary>
-            Configures the server...
-            </summary>
-        </member>
-        <member name="M:Itas.Infrastructure.RabbitServer.ServerConfig.#ctor">
+        <member name="M:Itas.Infrastructure.RabbitServer.MessageHandlerEngine.HandleAnonymousMessage(System.Object)">
             <summary>
             
             </summary>
+            <param name="message"></param>
         </member>
-        <member name="M:Itas.Infrastructure.RabbitServer.ServerConfig.#ctor(Itas.Infrastructure.RabbitServer.ServerConfig.ConectionInfo)">
+        <member name="T:Itas.Infrastructure.RabbitServer.GenericEventHandlerBase">
             <summary>
-            
-            </summary>
-            <param name="connectionInfo"></param>
-        </member>
-        <member name="F:Itas.Infrastructure.RabbitServer.ServerConfig.connectionInfo">
-            <summary>
-            
+            Inherit from this to handle generic messages.. 
             </summary>
         </member>
-        <member name="M:Itas.Infrastructure.RabbitServer.ServerConfig.RegisterCustomBinding``1(System.String)">
+        <member name="T:Itas.Infrastructure.RabbitServer.MessageHandler`1">
             <summary>
-            
+            Use this clss as the baseclass for your handlers. 
             </summary>
             <typeparam name="T"></typeparam>
-            <param name="bindingKey"></param>
-            <returns></returns>
         </member>
-        <member name="M:Itas.Infrastructure.RabbitServer.ServerConfig.RegisterBinding``1">
+        <member name="M:Itas.Infrastructure.RabbitServer.MessageHandler`1.Handle(System.Object)">
             <summary>
-            Expects that the container contains an IEventHandler/<T/> registration
+            
             </summary>
-            <typeparam name="T"></typeparam>
-            <returns></returns>
+            <param name="param"></param>
+        </member>
+        <member name="M:Itas.Infrastructure.RabbitServer.MessageHandler`1.Handle(`0)">
+            <summary>
+            Must be overridden in your class. This is where you handle your event.. 
+            </summary>
+            <param name="param"></param>
+        </member>
+        <member name="T:Itas.Infrastructure.RabbitServer.IMessageHandler">
+            <summary>
+            
+            </summary>
+        </member>
+        <member name="M:Itas.Infrastructure.RabbitServer.IMessageHandler.Handle(System.Object)">
+            <summary>
+            Called internaly only.
+            </summary>
+            <param name="param"></param>
+        </member>
+        <member name="T:Itas.Infrastructure.RabbitServer.IMessageAdapter">
+            <summary>
+            
+            </summary>
+        </member>
+        <member name="E:Itas.Infrastructure.RabbitServer.IMessageAdapter.OnMessage">
+            <summary>
+            First argument should be the message, and the second one should be the context. 
+            The context is injected into the Container when the handler is created.
+            </summary>
+        </member>
+        <member name="M:Itas.Infrastructure.RabbitServer.IMessageAdapter.StartAdapter">
+            <summary>
+            
+            </summary>
+        </member>
+        <member name="M:Itas.Infrastructure.RabbitServer.IMessageAdapter.StopAdapter">
+            <summary>
+            
+            </summary>
+        </member>
+        <member name="M:Itas.Infrastructure.RabbitServer.IMessageAdapter.Bind(System.String,System.Type)">
+            <summary>
+            
+            </summary>
+            <param name="routingKey"></param>
+            <param name="handler"></param>
         </member>
     </members>
 </doc>

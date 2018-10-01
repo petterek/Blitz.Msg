@@ -1,6 +1,6 @@
 ﻿namespace Itas.Infrastructure.RabbitServer
 {
-    internal class HandlingOfEventFaild
+    public class HandlingOfEventFaild
     {
         public HandlingOfEventFaild(string innnerMessage, string eventType, string exceptionType, string exceptionMsg)
         {
