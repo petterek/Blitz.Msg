@@ -1,6 +1,6 @@
-﻿using System.Collections.ObjectModel;
+using System.Collections.ObjectModel;
 
-namespace Itas.Infrastructure.RabbitServer
+namespace Itas.Infrastructure.MessageHandler
 {
     public class RecievedEventInfo
     {
@@ -8,4 +8,5 @@ namespace Itas.Infrastructure.RabbitServer
         public string Body { get; }
         public ReadOnlyDictionary<string, string> Attributes { get; }
     }
+
 }

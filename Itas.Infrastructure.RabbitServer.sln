@@ -3,7 +3,7 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 15
 VisualStudioVersion = 15.0.26124.0
 MinimumVisualStudioVersion = 15.0.26124.0
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Itas.Infrastructure.RabbitServer", "Itas.Infrastructure.RabbitServer\Itas.Infrastructure.RabbitServer.csproj", "{9374FD2C-E519-42C8-86BD-0F40F8F30F03}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Itas.Infrastructure.MessageHandler", "Itas.Infrastructure.RabbitServer\Itas.Infrastructure.MessageHandler.csproj", "{9374FD2C-E519-42C8-86BD-0F40F8F30F03}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "RabbitHost.Test", "RabbitHost.Test\RabbitHost.Test.csproj", "{D275A1EF-73C1-44A8-8A13-7337E105EA81}"
 EndProject
@@ -15,7 +15,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution 
 		readme.md = readme.md
 	EndProjectSection
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Itas.Infrastructure.Messaging.RabbitAdapter", "Itas.Infrastructure.Messaging.RabbitAdapter\Itas.Infrastructure.Messaging.RabbitAdapter.csproj", "{52D924EE-E7FC-4509-9DAF-0F340007D3B2}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Itas.Infrastructure.Messaging.RabbitAdapter", "Itas.Infrastructure.Messaging.RabbitAdapter\Itas.Infrastructure.Messaging.RabbitAdapter.csproj", "{52D924EE-E7FC-4509-9DAF-0F340007D3B2}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

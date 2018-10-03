@@ -1,4 +1,4 @@
-﻿namespace Itas.Infrastructure.RabbitServer
+namespace Itas.Infrastructure.MessageHandler
 {
     /// <summary>
     /// Inherit from this to handle generic messages.. 

@@ -1,6 +1,6 @@
-﻿using System;
+using System;
 
-namespace Itas.Infrastructure.RabbitServer
+namespace Itas.Infrastructure.MessageHandler
 {
     /// <summary>
     /// 

@@ -1,4 +1,4 @@
-﻿namespace Itas.Infrastructure.RabbitServer
+namespace Itas.Infrastructure.MessageHandler
 {
     public class HandlingOfEventFaild
     {

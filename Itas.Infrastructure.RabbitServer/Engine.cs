@@ -1,8 +1,8 @@
-﻿
+
 using System;
 using System.Collections.Generic;
 
-namespace Itas.Infrastructure.RabbitServer
+namespace Itas.Infrastructure.MessageHandler
 {
     /// <summary>
     /// 
@@ -10,7 +10,7 @@ namespace Itas.Infrastructure.RabbitServer
     public class MessageHandlerEngine
     {
        
-        private readonly Func<Type, object, object> handlerCreator;
+        private readonly Func<Type, object, object> handlerFactory;
         private readonly IMessageAdapter producer;
         private Dictionary<Type, Type> HandlerTypes = new Dictionary<Type, Type>();
 
@@ -28,13 +28,13 @@ namespace Itas.Infrastructure.RabbitServer
         /// <summary>
         /// 
         /// </summary>
-        /// <param name="handlerCreator"></param>
+        /// <param name="handlerFactory"></param>
         /// <param name="producer"></param>
 
-        public MessageHandlerEngine(Func<Type,object, object> handlerCreator, IMessageAdapter producer)
+        public MessageHandlerEngine(Func<Type,object, object> handlerFactory, IMessageAdapter producer)
         {
             
-            this.handlerCreator = handlerCreator;
+            this.handlerFactory = handlerFactory;
             this.producer = producer;
 
 
@@ -59,7 +59,7 @@ namespace Itas.Infrastructure.RabbitServer
         /// <param name="context"></param>
         public void HandleTypedMessages(object message, object context)
         {
-            var instance = (IMessageHandler)handlerCreator(GetHandlerType(message.GetType()), context);
+            var instance = (IMessageHandler)handlerFactory(GetHandlerType(message.GetType()), context);
             instance.Handle(message);
         }
 

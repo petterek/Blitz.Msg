@@ -11,7 +11,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\Itas.Infrastructure.RabbitServer\Itas.Infrastructure.RabbitServer.csproj" />
+    <ProjectReference Include="..\Itas.Infrastructure.RabbitServer\Itas.Infrastructure.MessageHandler.csproj" />
   </ItemGroup>
 
 </Project>
