@@ -1,16 +1,21 @@
-﻿using RabbitMQ.Client;
+﻿using Itas.Infrastructure.Context;
+using RabbitMQ.Client;
 using System;
+using System.Collections.Generic;
+using System.IO;
 
 namespace Itas.Infrastructure.Messaging.RabbitAdapter
 {
-    public class ServerManagement :  IDisposable
+    public class ServerManagement : IDisposable
     {
-        private readonly string clientName;
-        private readonly IModel channel;
-        private readonly IConnection connection;
+        internal readonly string clientName;
+        internal readonly IModel channel;
+        internal readonly IConnection connection;
+        readonly ISerializer serializer;
 
-        public ServerManagement(string clientName, IConnection connection)
+        public ServerManagement(string clientName, IConnection connection, ISerializer serializer)
         {
+            this.serializer = serializer;
             this.clientName = clientName;
             this.connection = connection;
             this.channel = CreateChannel(); //creates an mgmnt channel--
@@ -29,9 +34,10 @@ namespace Itas.Infrastructure.Messaging.RabbitAdapter
         /// 
         /// </summary>
         /// <param name="exchangeName"></param>
-        public void CreateTopicExchange(string exchangeName)
+        public ExchangeInfo CreateTopicExchange(string exchangeName)
         {
             channel.ExchangeDeclare(exchangeName, "topic", true, false);
+            return new ExchangeInfo(this,exchangeName);
         }
 
         /// <summary>
@@ -44,15 +50,25 @@ namespace Itas.Infrastructure.Messaging.RabbitAdapter
         }
 
         /// <summary>
-        /// Creates a queue on the server. 
+        /// Creates a queue on the server, all queues will be prefixed with the client name. 
         /// </summary>
         /// <param name="name"></param>
         /// <returns></returns>
-        public QueueInfo CreateQueue(string name)
+        public QueueInfo CreateQueue(string name, string deadLetterExchange = "")
         {
-            channel.QueueDeclare($"{clientName}_{name}", true, false, false);
-            return new QueueInfo(channel, name);
+            string QueueName = $"{clientName}_{name}";
+            if (!string.IsNullOrEmpty(deadLetterExchange))
+            {
+                channel.QueueDeclare(QueueName, true, false, false, new Dictionary<string, object>() { { "x-dead-letter-exchange", $"{deadLetterExchange}" } });
+            }
+            else
+            {
+                channel.QueueDeclare(QueueName, true, false, false);
+            }
+
+            return new QueueInfo(this, QueueName);
         }
+    
 
         #region IDisposable Support
         private bool disposedValue = false; // To detect redundant calls
@@ -75,6 +91,8 @@ namespace Itas.Infrastructure.Messaging.RabbitAdapter
 
 
 
+
+
         // TODO: override a finalizer only if Dispose(bool disposing) above has code to free unmanaged resources.
         // ~ServerManagment() {
         //   // Do not change this code. Put cleanup code in Dispose(bool disposing) above.
@@ -93,20 +111,55 @@ namespace Itas.Infrastructure.Messaging.RabbitAdapter
 
         public class QueueInfo
         {
-            private IModel channel;
-            private string name;
+           
+            public string name;
+            readonly ServerManagement management;
 
-            public QueueInfo(IModel channel, string name)
+            public QueueInfo(ServerManagement management, string name)
             {
-                this.channel = channel;
+                this.management = management;
                 this.name = name;
             }
 
-            public void ConnectToExchange(string exchangeName, string bindingKey)
+            public QueueInfo ConnectToExchange(string exchangeName, string bindingKey)
             {
-                channel.ExchangeBind(name, exchangeName, bindingKey);
+                management.channel.QueueBind(name, exchangeName, bindingKey);
+                return this;
+            }
+        }
+        public class ExchangeInfo
+        {
+            public readonly string name;
+            readonly ServerManagement management;
+
+            public ExchangeInfo(ServerManagement management, string name)
+            {
+                this.management = management;
+                this.name = name;
+            }
+
+            public QueueInfo CreateAndBindQueue(string queueName, string routingKey)
+            {
+                management.channel.QueueDeclare(queueName, true, false, false);
+                management.channel.QueueBind(queueName, name, routingKey);
+                return new QueueInfo(management, queueName);
+            }
+
+            public void SendMessage(object message)
+            {
+                var props = management.channel.CreateBasicProperties();
+                props.DeliveryMode = 2;
+                management.channel.BasicPublish(name, message.GetType().FullName,props, management.serializeToArray(message));
             }
         }
 
+        private byte[] serializeToArray(object message)
+        {
+            var m = new MemoryStream();
+            serializer.ToStream(m, message);
+            return m.ToArray();
+        }
     }
+
+    
 }

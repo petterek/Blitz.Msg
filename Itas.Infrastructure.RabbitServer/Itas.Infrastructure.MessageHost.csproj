@@ -2,8 +2,8 @@
 
   <PropertyGroup>
     <TargetFramework>netstandard2.0</TargetFramework>
-    <AssemblyName>Itas.Infrastructure.RabbitServer</AssemblyName>
-    <RootNamespace>Itas.Infrastructure.RabbitServer</RootNamespace>
+    <AssemblyName>Itas.Infrastructure.MessageHost</AssemblyName>
+    <RootNamespace>Itas.Infrastructure.MessageHost</RootNamespace>
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
     <IncludeSymbols>true</IncludeSymbols>
   </PropertyGroup>

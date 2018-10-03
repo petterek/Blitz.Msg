@@ -1,95 +1,131 @@
 <?xml version="1.0"?>
 <doc>
     <assembly>
-        <name>Itas.Infrastructure.RabbitServer</name>
+        <name>Itas.Infrastructure.MessageHost</name>
     </assembly>
     <members>
-        <member name="T:Itas.Infrastructure.RabbitServer.MessageHandlerEngine">
+        <member name="T:Itas.Infrastructure.MessageHost.MessageHandlerEngine">
             <summary>
             
             </summary>
         </member>
-        <member name="M:Itas.Infrastructure.RabbitServer.MessageHandlerEngine.#ctor(System.Func{System.Type,System.Object,System.Object},Itas.Infrastructure.RabbitServer.IMessageAdapter)">
+        <member name="M:Itas.Infrastructure.MessageHost.MessageHandlerEngine.#ctor(System.Func{System.Type,System.Object,System.Object},Itas.Infrastructure.MessageHost.IMessageAdapter)">
             <summary>
             
             </summary>
             <param name="handlerCreator"></param>
             <param name="producer"></param>
         </member>
-        <member name="M:Itas.Infrastructure.RabbitServer.MessageHandlerEngine.HandleTypedMessages(System.Object,System.Object)">
+        <member name="M:Itas.Infrastructure.MessageHost.MessageHandlerEngine.Register``1">
+            <summary>
+            
+            </summary>
+            <typeparam name="TMessageType"></typeparam>
+        </member>
+        <member name="M:Itas.Infrastructure.MessageHost.MessageHandlerEngine.RegisterExplicit``1(System.String)">
+            <summary>
+            
+            </summary>
+            <typeparam name="TMessageHandler"></typeparam>
+            <param name="messageName"></param>
+        </member>
+        <member name="M:Itas.Infrastructure.MessageHost.MessageHandlerEngine.HandleTypedMessages(System.Object,System.Object)">
             <summary>
             
             </summary>
             <param name="message"></param>
             <param name="context"></param>
         </member>
-        <member name="M:Itas.Infrastructure.RabbitServer.MessageHandlerEngine.HandleAnonymousMessage(System.Object)">
+        <member name="M:Itas.Infrastructure.MessageHost.MessageHandlerEngine.HandleAnonymousMessage(System.Object)">
             <summary>
             
             </summary>
             <param name="message"></param>
         </member>
-        <member name="T:Itas.Infrastructure.RabbitServer.GenericEventHandlerBase">
+        <member name="T:Itas.Infrastructure.MessageHost.GenericMessageHandlerBase">
             <summary>
             Inherit from this to handle generic messages.. 
             </summary>
         </member>
-        <member name="T:Itas.Infrastructure.RabbitServer.MessageHandler`1">
+        <member name="T:Itas.Infrastructure.MessageHost.MessageHandler`1">
             <summary>
             Use this clss as the baseclass for your handlers. 
             </summary>
             <typeparam name="T"></typeparam>
         </member>
-        <member name="M:Itas.Infrastructure.RabbitServer.MessageHandler`1.Handle(System.Object)">
+        <member name="M:Itas.Infrastructure.MessageHost.MessageHandler`1.Handle(System.Object)">
             <summary>
             
             </summary>
             <param name="param"></param>
         </member>
-        <member name="M:Itas.Infrastructure.RabbitServer.MessageHandler`1.Handle(`0)">
+        <member name="M:Itas.Infrastructure.MessageHost.MessageHandler`1.Handle(`0)">
             <summary>
             Must be overridden in your class. This is where you handle your event.. 
             </summary>
             <param name="param"></param>
         </member>
-        <member name="T:Itas.Infrastructure.RabbitServer.IMessageHandler">
+        <member name="T:Itas.Infrastructure.MessageHost.IMessageHandler">
             <summary>
             
             </summary>
         </member>
-        <member name="M:Itas.Infrastructure.RabbitServer.IMessageHandler.Handle(System.Object)">
+        <member name="M:Itas.Infrastructure.MessageHost.IMessageHandler.Handle(System.Object)">
             <summary>
             Called internaly only.
             </summary>
             <param name="param"></param>
         </member>
-        <member name="T:Itas.Infrastructure.RabbitServer.IMessageAdapter">
+        <member name="T:Itas.Infrastructure.MessageHost.IMessageAdapter">
             <summary>
             
             </summary>
         </member>
-        <member name="E:Itas.Infrastructure.RabbitServer.IMessageAdapter.OnMessage">
+        <member name="E:Itas.Infrastructure.MessageHost.IMessageAdapter.OnMessage">
             <summary>
             First argument should be the message, and the second one should be the context. 
             The context is injected into the Container when the handler is created.
             </summary>
         </member>
-        <member name="M:Itas.Infrastructure.RabbitServer.IMessageAdapter.StartAdapter">
+        <member name="M:Itas.Infrastructure.MessageHost.IMessageAdapter.StartAdapter">
             <summary>
             
             </summary>
         </member>
-        <member name="M:Itas.Infrastructure.RabbitServer.IMessageAdapter.StopAdapter">
+        <member name="M:Itas.Infrastructure.MessageHost.IMessageAdapter.StopAdapter">
             <summary>
             
             </summary>
         </member>
-        <member name="M:Itas.Infrastructure.RabbitServer.IMessageAdapter.Bind(System.String,System.Type)">
+        <member name="M:Itas.Infrastructure.MessageHost.IMessageAdapter.Bind(System.String,System.Type,System.Type)">
             <summary>
             
             </summary>
             <param name="routingKey"></param>
+            <param name="messageType"></param>
             <param name="handler"></param>
+        </member>
+        <member name="T:Itas.Infrastructure.MessageHost.RecievedMessageData">
+            <summary>
+            
+            </summary>
+        </member>
+        <member name="M:Itas.Infrastructure.MessageHost.RecievedMessageData.#ctor(System.Byte[],System.Collections.Generic.IDictionary{System.String,System.Object})">
+            <summary>
+            
+            </summary>
+            <param name="payload"></param>
+            <param name="attributes"></param>
+        </member>
+        <member name="P:Itas.Infrastructure.MessageHost.RecievedMessageData.Payload">
+            <summary>
+            
+            </summary>
+        </member>
+        <member name="P:Itas.Infrastructure.MessageHost.RecievedMessageData.Attributes">
+            <summary>
+            
+            </summary>
         </member>
     </members>
 </doc>

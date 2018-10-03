@@ -1,6 +1,6 @@
-﻿using System;
+using System;
 
-namespace Itas.Infrastructure.RabbitServer
+namespace Itas.Infrastructure.MessageHost
 {
     /// <summary>
     /// 
@@ -16,7 +16,6 @@ namespace Itas.Infrastructure.RabbitServer
         /// <summary>
         /// 
         /// </summary>
-
         void StartAdapter();
 
         /// <summary>
@@ -28,8 +27,8 @@ namespace Itas.Infrastructure.RabbitServer
         /// 
         /// </summary>
         /// <param name="routingKey"></param>
+        /// <param name="messageType"></param>
         /// <param name="handler"></param>
-        void Bind(string routingKey, Type handler);
-        void BindAnonymouse(string routingKey, Type handledBy);
+        void Bind(string routingKey,Type messageType, Type handler);
     }
 }

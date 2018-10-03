@@ -1,6 +1,5 @@
 using Itas.Infrastructure.Context;
-using Itas.Infrastructure.Messaging.RabbitAdapter;
-using Itas.Infrastructure.RabbitServer;
+using Itas.Infrastructure.MessageHost;
 using NUnit.Framework;
 using System;
 using System.Collections.Generic;
@@ -50,49 +49,37 @@ namespace RabbitHost.Test
         public void SetupLooksGood()
         {
             var container = new SimpleFactory.Container();
-            container.Register<MessageHandler<SomethingHasHappend>, MyHandler>();
+            container.Register<MessageHandler<SomethingHasHappend>, MyHandler>().AsSingleton();
+            
             container.Register<MyGenericEventHandler>();
 
             IMessageAdapter adapter;
-            //adapter = new RabbitMessageAdapter(new RabbitConectionInfo { UserName = "guest", Password = "guest", Server = "localhost", ExchangeName = "Simployer", ClientName = "MyTestingApp" }, new Serializer());
+
+            //adapter = new RabbitMessageAdapter(
+            //    new RabbitConectionInfo { UserName = "guest", Password = "guest", Server = "localhost", ExchangeName = "Simployer", ClientName = "MyTestingApp" }, 
+            //    new Serializer(), (recievedEvent)=> {
+            //        var ctx = new ClientContext();
+            //        return ctx;
+            //    } );
 
             adapter = new FakeAdapter(new List<object> { new SomethingHasHappend()}, new ClientContext { });
-            
-            var Server = new MessageHandlerEngine((t, c)=> container.CreateAnonymousInstance(t,c), adapter);
+
+            var Server = new MessageHandlerEngine((theType, ctx) => container.CreateAnonymousInstance(theType, ctx), adapter);
+
             Server.Register<SomethingHasHappend>();
+            Server.RegisterExplicit<MyGenericEventHandler>("#");
 
 
             adapter.StartAdapter();
 
-
             //System.Threading.Thread.Sleep(10000);
 
             adapter.StopAdapter();
+
+            Assert.IsNotNull(((MyHandler)container.CreateInstance<MessageHandler<SomethingHasHappend>>()).input);
+            Assert.AreEqual(1,((MyHandler)container.CreateInstance<MessageHandler<SomethingHasHappend>>()).Counter);
         }
-
-        [Test]
-        public void BindingKeyGetsCorrectOnTypes()
-        {
-
-            //var info = settings.RegisterBinding<SomethingHasHappend>();
-
-            //Assert.AreEqual("RabbitHost.Test.SomethingHasHappend", info.RoutingKey);
-            //Assert.AreEqual(typeof(Itas.Infrastructure.RabbitServer.MessageHandler<SomethingHasHappend>), info.MessageType);
-
-        }
-
-        [Test]
-        public void BindingKeyGetsCorrectOnWildCards()
-        {
-
-            //var info = settings.RegisterCustomBinding<MyGenericEventHandler>("#");
-
-            //Assert.AreEqual("#", info.RoutingKey);
-            //Assert.AreEqual(typeof(MyGenericEventHandler), info.MessageType);
-
-        }
-
-
+        
     }
 
     internal class FakeAdapter : IMessageAdapter
@@ -104,29 +91,26 @@ namespace RabbitHost.Test
             this.ctx = ctx;
         }
 
-        public event Action< object, object> OnMessage;
+        public event Action<object, object> OnMessage;
 
-        public void Bind(string routingKey, Type handler)
+        public void Bind(string routingKey,Type messageType, Type handler)
         {
-           
+
         }
 
-        public void BindAnonymouse(string routingKey, Type handledBy)
-        {
-           
-        }
+        
 
         public void StartAdapter()
         {
-            foreach(var o in messages )
+            foreach (var o in messages)
             {
-                OnMessage( o,ctx);
+                OnMessage(o, ctx);
             }
         }
 
         public void StopAdapter()
         {
-            
+
         }
 
         #region IDisposable Support
@@ -167,32 +151,35 @@ namespace RabbitHost.Test
         #endregion
     }
 
-    public class MyGenericEventHandler : GenericEventHandlerBase
+    public class MyGenericEventHandler : GenericMessageHandlerBase
     {
         public MyGenericEventHandler()
         {
 
         }
 
-        public override void Handle(RecievedEventInfo param)
+        public override void Handle(RecievedMessageData param)
         {
 
         }
     }
 
 
-    public class MyHandler : Itas.Infrastructure.RabbitServer.MessageHandler<SomethingHasHappend>
+    public class MyHandler : MessageHandler<SomethingHasHappend>
     {
         private readonly ClientContext ctx;
+        public SomethingHasHappend input;
+        public int Counter = 0;
 
-        public MyHandler(ClientContext ctx)
-        {
-            this.ctx = ctx;
-        }
+        //public MyHandler(ClientContext ctx)
+        //{
+        //    this.ctx = ctx;
+        //}
 
         public override void Handle(SomethingHasHappend param)
         {
-            
+            input = param;
+            Counter++;
         }
     }
 

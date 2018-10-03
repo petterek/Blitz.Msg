@@ -1,15 +1,15 @@
-﻿
+
 using System;
 using System.Collections.Generic;
 
-namespace Itas.Infrastructure.RabbitServer
+namespace Itas.Infrastructure.MessageHost
 {
     /// <summary>
     /// 
     /// </summary>
     public class MessageHandlerEngine
     {
-       
+
         private readonly Func<Type, object, object> handlerCreator;
         private readonly IMessageAdapter producer;
         private Dictionary<Type, Type> HandlerTypes = new Dictionary<Type, Type>();
@@ -31,9 +31,9 @@ namespace Itas.Infrastructure.RabbitServer
         /// <param name="handlerCreator"></param>
         /// <param name="producer"></param>
 
-        public MessageHandlerEngine(Func<Type,object, object> handlerCreator, IMessageAdapter producer)
+        public MessageHandlerEngine(Func<Type, object, object> handlerCreator, IMessageAdapter producer)
         {
-            
+
             this.handlerCreator = handlerCreator;
             this.producer = producer;
 
@@ -42,13 +42,22 @@ namespace Itas.Infrastructure.RabbitServer
         }
 
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <typeparam name="TMessageType"></typeparam>
         public void Register<TMessageType>()
         {
-            producer.Bind(typeof(TMessageType).FullName, typeof(TMessageType));
+            producer.Bind(typeof(TMessageType).FullName, typeof(TMessageType), GetHandlerType(typeof(TMessageType)));
         }
-        public void RegisterExplicit<TMessageHandler>(string messageName) where TMessageHandler : GenericEventHandlerBase
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <typeparam name="TMessageHandler"></typeparam>
+        /// <param name="messageName"></param>
+        public void RegisterExplicit<TMessageHandler>(string messageName) where TMessageHandler : GenericMessageHandlerBase
         {
-            producer.BindAnonymouse(messageName, typeof(TMessageHandler));
+            producer.Bind(messageName, null, typeof(TMessageHandler));
         }
 
 

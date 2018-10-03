@@ -1,6 +1,6 @@
 ﻿using Itas.Infrastructure.Context;
+using Itas.Infrastructure.MessageHost;
 using Itas.Infrastructure.Messaging.RabbitAdapter;
-using Itas.Infrastructure.RabbitServer;
 using SimpleFactory.Contract;
 using System;
 
@@ -13,7 +13,8 @@ namespace Listener.Demo
             var container = new SimpleFactory.Container(LifeTimeEnum.PerGraph);
             container.Register<MessageHandler<MyEventClass>, MyHandler>();
 
-            IMessageAdapter messageProducer = new RabbitMessageAdapter(new RabbitConectionInfo(), null, (e)=> new ClientContext());
+            RabbitConectionInfo connectionInfo = new RabbitConectionInfo { UserName = "guest", Password = "guest", Server = "localhost", ExchangeName = "Simployer", ClientName = "MyTestingApp" };
+            IMessageAdapter messageProducer = new RabbitMessageAdapter(connectionInfo, null, (e)=> new ClientContext());
 
             var server = new MessageHandlerEngine((t,c)=> container.CreateAnonymousInstance(t,c), messageProducer);
             server.Register<MyEventClass>();

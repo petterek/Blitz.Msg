@@ -1,5 +1,5 @@
 ﻿using Itas.Infrastructure.Context;
-using Itas.Infrastructure.RabbitServer;
+using Itas.Infrastructure.MessageHost;
 using RabbitMQ.Client;
 using RabbitMQ.Client.Events;
 using System;
@@ -18,18 +18,21 @@ namespace Itas.Infrastructure.Messaging.RabbitAdapter
         private readonly Context.ISerializer serializer;
         private readonly Func<BasicDeliverEventArgs, object> contextCreator;
         private List<BindingInfo> bindingInfos = new List<BindingInfo>();
+        private ServerManagement.ExchangeInfo GlobaleErrorExchange;
 
-        public event Action< object, object> OnMessage;
+        public event Action<object, object> OnMessage;
         public RabbitMessageAdapter(RabbitConectionInfo connectionInfo, ISerializer serializer, Func<BasicDeliverEventArgs, object> contextCreator)
         {
 
             this.connectionFactory = new ConnectionFactory()
             {
                 HostName = connectionInfo.Server,
-                UserName = connectionInfo.UserName,
-                Password = connectionInfo.Password,
+                UserName = connectionInfo.UserName ?? "guest",
+                Password = connectionInfo.Password ?? "guest",
                 VirtualHost = connectionInfo.VirtualHost ?? "/"
             };
+            connectionFactory.AutomaticRecoveryEnabled = true;
+
             this.connectionInfo = connectionInfo;
             this.serializer = serializer;
             this.contextCreator = contextCreator;
@@ -37,62 +40,85 @@ namespace Itas.Infrastructure.Messaging.RabbitAdapter
 
         public void StartAdapter()
         {
-            rabbitServerConnection = connectionFactory.CreateConnection(connectionInfo.ClientName);
-            management = new ServerManagement(connectionInfo.ClientName, rabbitServerConnection);
+            management = new ServerManagement(connectionInfo.ClientName, connectionFactory.CreateConnection(connectionInfo.ClientName),serializer);
+         
+            //Create globale Error Exchange, if not exists
+            management.CreateTopicExchange(connectionInfo.ExchangeName + "_GlobalErrorsExchange");
 
-            //Create Exchange and Dead Letter System.. 
-            management.CreateTopicExchange(connectionInfo.ExchangeName);
-            management.CreateDirectExchange(connectionInfo.ExchangeName + "_DeadLetterExchange");
-            //We need to create the deadletter queue as well
-            //
-            //
-            //
-
+            //Assert Dead Letter Exchange and Queue for this consumer.. 
+            var dle = management.CreateTopicExchange(connectionInfo.ClientName + "_DeadLetterExchange");
+            dle.CreateAndBindQueue(connectionInfo.ClientName + "_DeadLetterQueue", "#");
+                        
 
             foreach (var bindingInfo in bindingInfos)
             {
-                management.CreateQueue(bindingInfo.routingKey).ConnectToExchange(connectionInfo.ExchangeName, bindingInfo.routingKey);
+                var theQueue = management.CreateQueue(bindingInfo.RoutingKey,dle.name).ConnectToExchange(connectionInfo.ExchangeName, bindingInfo.RoutingKey);
 
                 IModel model = management.CreateChannel();
+                model.BasicQos(0, 1, false);
                 var consumer = new EventingBasicConsumer(model);
                 channels.Add(model);
 
-                consumer.Received += (a, b) =>
+                if (bindingInfo.MessageType != null)
                 {
-                    
-                    var param = serializer.FromStream(new System.IO.MemoryStream(b.Body), bindingInfo.messageType);
-                    
-                    try
+                    consumer.Received += (a, theMessageRecieved) =>
                     {
-                        OnMessage(param, contextCreator(b));
-                        model.BasicAck(b.DeliveryTag, false);
-                    }
-                    catch (Exception ex)
+                        var param = serializer.FromStream(new System.IO.MemoryStream(theMessageRecieved.Body), bindingInfo.MessageType);
+                        try
+                        {
+                            OnMessage(param, contextCreator(theMessageRecieved));
+                            model.BasicAck(theMessageRecieved.DeliveryTag, false);
+                        }
+                        catch (Exception ex)
+                        {
+                            model.BasicNack(theMessageRecieved.DeliveryTag, false, false);
+                        }
+                    };
+                }
+                else //Anonymouse handler.. Need to handle the 
+                {
+                    consumer.Received += (a, theMessageRecieved) =>
                     {
-
-                    }
-                };
+                        var param = new RecievedMessageData(theMessageRecieved.Body, theMessageRecieved.BasicProperties.Headers);
+                        try
+                        {
+                            OnMessage(param, contextCreator(theMessageRecieved));
+                            model.BasicAck(theMessageRecieved.DeliveryTag, false);
+                        }
+                        catch (Exception ex)
+                        {
+                            model.BasicNack(theMessageRecieved.DeliveryTag, false, false);
+                        }
+                    };
+                }
+                model.BasicConsume(theQueue.name, false, consumer);
             }
+        }
+
+        private void SendToError(BasicDeliverEventArgs faildMessage)
+        {
+            var msg = new ErrorModel();
+            msg.CorrelationId = faildMessage.BasicProperties.CorrelationId;
+            msg.MessageType = faildMessage.RoutingKey;
+            msg.HandlerName = connectionInfo.ClientName;
+
+            GlobaleErrorExchange.SendMessage(msg);
         }
 
         public void StopAdapter()
         {
+            management.Dispose();
             foreach (var model in channels)
             {
                 model.Close();
             }
+            rabbitServerConnection.Close();
         }
 
-        public void Bind(string routingKey, Type messageType)
+        public void Bind(string routingKey, Type messageType, Type handlerType)
         {
-            bindingInfos.Add(new BindingInfo { routingKey = routingKey, messageType = messageType });
+            bindingInfos.Add(new BindingInfo { RoutingKey = routingKey, MessageType = messageType, HandlerType = handlerType });
         }
-
-        public void BindAnonymouse(string routingKey, Type handledBy)
-        {
-            throw new NotImplementedException();
-        }
-
 
         #region IDisposable Support
         private bool disposedValue = false; // To detect redundant calls
@@ -135,8 +161,16 @@ namespace Itas.Infrastructure.Messaging.RabbitAdapter
 
         internal class BindingInfo
         {
-            internal string routingKey;
-            internal Type messageType;
+            internal string RoutingKey;
+            internal Type MessageType;
+            internal Type HandlerType;
         }
+    }
+
+    public class ErrorModel
+    {
+        internal string CorrelationId;
+        internal string MessageType;
+        internal string HandlerName;
     }
 }

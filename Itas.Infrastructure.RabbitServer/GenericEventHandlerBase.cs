@@ -1,9 +1,9 @@
-﻿namespace Itas.Infrastructure.RabbitServer
+namespace Itas.Infrastructure.MessageHost
 {
     /// <summary>
     /// Inherit from this to handle generic messages.. 
     /// </summary>
-    public abstract class GenericEventHandlerBase : MessageHandler<RecievedEventInfo>
+    public abstract class GenericMessageHandlerBase : MessageHandler<RecievedMessageData>
     {
     }
 }
