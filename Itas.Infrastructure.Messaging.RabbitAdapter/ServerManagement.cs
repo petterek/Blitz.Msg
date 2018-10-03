@@ -9,16 +9,20 @@ namespace Itas.Infrastructure.Messaging.RabbitAdapter
     public class ServerManagement : IDisposable
     {
         internal readonly string clientName;
-        internal readonly IModel channel;
-        internal readonly IConnection connection;
+        internal readonly IModel InChannel;
+        internal readonly IModel OutChannel;
+        internal readonly IConnection IncommingConnection;
         readonly ISerializer serializer;
+        readonly IConnection outgoingConnection;
 
-        public ServerManagement(string clientName, IConnection connection, ISerializer serializer)
+        public ServerManagement(string clientName, IConnection incommongConnection,IConnection outgoingConnection, ISerializer serializer)
         {
+            this.outgoingConnection = outgoingConnection;
             this.serializer = serializer;
             this.clientName = clientName;
-            this.connection = connection;
-            this.channel = CreateChannel(); //creates an mgmnt channel--
+            this.IncommingConnection = incommongConnection;
+            this.InChannel = incommongConnection.CreateModel();
+            this.OutChannel = outgoingConnection.CreateModel();
         }
 
         /// <summary>
@@ -27,7 +31,7 @@ namespace Itas.Infrastructure.Messaging.RabbitAdapter
         /// <returns></returns>
         public IModel CreateChannel()
         {
-            return connection.CreateModel();
+            return IncommingConnection.CreateModel();
         }
 
         /// <summary>
@@ -36,7 +40,7 @@ namespace Itas.Infrastructure.Messaging.RabbitAdapter
         /// <param name="exchangeName"></param>
         public ExchangeInfo CreateTopicExchange(string exchangeName)
         {
-            channel.ExchangeDeclare(exchangeName, "topic", true, false);
+            InChannel.ExchangeDeclare(exchangeName, "topic", true, false);
             return new ExchangeInfo(this,exchangeName);
         }
 
@@ -46,7 +50,7 @@ namespace Itas.Infrastructure.Messaging.RabbitAdapter
         /// <param name="exchangeName"></param>
         public void CreateDirectExchange(string exchangeName)
         {
-            channel.ExchangeDeclare(exchangeName, "direct", true, false);
+            InChannel.ExchangeDeclare(exchangeName, "direct", true, false);
         }
 
         /// <summary>
@@ -54,16 +58,16 @@ namespace Itas.Infrastructure.Messaging.RabbitAdapter
         /// </summary>
         /// <param name="name"></param>
         /// <returns></returns>
-        public QueueInfo CreateQueue(string name, string deadLetterExchange = "")
+        public QueueInfo CreateQueueAndBind(string routingKey,string exchangeName, string deadLetterExchange = "")
         {
-            string QueueName = $"{clientName}_{name}";
+            string QueueName = $"{clientName}_{exchangeName}_{routingKey}";
             if (!string.IsNullOrEmpty(deadLetterExchange))
             {
-                channel.QueueDeclare(QueueName, true, false, false, new Dictionary<string, object>() { { "x-dead-letter-exchange", $"{deadLetterExchange}" } });
+                InChannel.QueueDeclare(QueueName, true, false, false, new Dictionary<string, object>() { { "x-dead-letter-exchange", $"{deadLetterExchange}" } });
             }
             else
             {
-                channel.QueueDeclare(QueueName, true, false, false);
+                InChannel.QueueDeclare(QueueName, true, false, false);
             }
 
             return new QueueInfo(this, QueueName);
@@ -79,12 +83,14 @@ namespace Itas.Infrastructure.Messaging.RabbitAdapter
             {
                 if (disposing)
                 {
-                    channel.Close(0, "Shutting down");
+                    InChannel.Close(0, "Shutting down");
+                    IncommingConnection.Close();
+                    outgoingConnection.Close();
                 }
 
                 // TODO: free unmanaged resources (unmanaged objects) and override a finalizer below.
                 // TODO: set large fields to null.
-
+                
                 disposedValue = true;
             }
         }
@@ -123,7 +129,7 @@ namespace Itas.Infrastructure.Messaging.RabbitAdapter
 
             public QueueInfo ConnectToExchange(string exchangeName, string bindingKey)
             {
-                management.channel.QueueBind(name, exchangeName, bindingKey);
+                management.InChannel.QueueBind(name, exchangeName, bindingKey);
                 return this;
             }
         }
@@ -140,16 +146,16 @@ namespace Itas.Infrastructure.Messaging.RabbitAdapter
 
             public QueueInfo CreateAndBindQueue(string queueName, string routingKey)
             {
-                management.channel.QueueDeclare(queueName, true, false, false);
-                management.channel.QueueBind(queueName, name, routingKey);
+                management.InChannel.QueueDeclare(queueName, true, false, false);
+                management.InChannel.QueueBind(queueName, name, routingKey);
                 return new QueueInfo(management, queueName);
             }
 
             public void SendMessage(object message)
             {
-                var props = management.channel.CreateBasicProperties();
+                var props = management.InChannel.CreateBasicProperties();
                 props.DeliveryMode = 2;
-                management.channel.BasicPublish(name, message.GetType().FullName,props, management.serializeToArray(message));
+                management.OutChannel.BasicPublish(name, message.GetType().FullName,props, management.serializeToArray(message));
             }
         }
 

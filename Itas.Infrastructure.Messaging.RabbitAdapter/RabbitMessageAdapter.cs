@@ -40,7 +40,7 @@ namespace Itas.Infrastructure.Messaging.RabbitAdapter
 
         public void StartAdapter()
         {
-            management = new ServerManagement(connectionInfo.ClientName, connectionFactory.CreateConnection(connectionInfo.ClientName),serializer);
+            management = new ServerManagement(connectionInfo.ClientName, connectionFactory.CreateConnection(connectionInfo.ClientName), connectionFactory.CreateConnection(connectionInfo.ClientName),serializer);
          
             //Create globale Error Exchange, if not exists
             management.CreateTopicExchange(connectionInfo.ExchangeName + "_GlobalErrorsExchange");
@@ -52,7 +52,7 @@ namespace Itas.Infrastructure.Messaging.RabbitAdapter
 
             foreach (var bindingInfo in bindingInfos)
             {
-                var theQueue = management.CreateQueue(bindingInfo.RoutingKey,dle.name).ConnectToExchange(connectionInfo.ExchangeName, bindingInfo.RoutingKey);
+                var theQueue = management.CreateQueueAndBind(bindingInfo.RoutingKey,connectionInfo.ExchangeName,dle.name).ConnectToExchange(connectionInfo.ExchangeName, bindingInfo.RoutingKey);
 
                 IModel model = management.CreateChannel();
                 model.BasicQos(0, 1, false);
@@ -112,7 +112,6 @@ namespace Itas.Infrastructure.Messaging.RabbitAdapter
             {
                 model.Close();
             }
-            rabbitServerConnection.Close();
         }
 
         public void Bind(string routingKey, Type messageType, Type handlerType)
