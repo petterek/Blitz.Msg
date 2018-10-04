@@ -14,11 +14,16 @@ namespace Itas.Infrastructure.Messaging.RabbitAdapter
             this.ctx = ctx;
         }
 
-        public event Action<object, object> OnMessage;
+        public event Action<object, Type, object> OnMessage;
+
+        private Dictionary<string, Type> handlerBindings = new Dictionary<string, Type>();
 
         public void Bind(string routingKey, Type messageType, Type handler)
         {
-
+            if (!handlerBindings.ContainsKey(routingKey))
+            {
+                handlerBindings.Add(routingKey, handler);
+            }
         }
 
 
@@ -26,7 +31,11 @@ namespace Itas.Infrastructure.Messaging.RabbitAdapter
         {
             foreach (var o in messages)
             {
-                OnMessage(o, ctx);
+                if (handlerBindings.ContainsKey(o.GetType().FullName))
+                {
+                    OnMessage(o, handlerBindings[o.GetType().FullName], ctx);
+                }
+                //We are missing support for wildcards.. 
             }
         }
 

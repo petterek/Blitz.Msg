@@ -20,7 +20,7 @@ namespace Itas.Infrastructure.Messaging.RabbitAdapter
         private List<BindingInfo> bindingInfos = new List<BindingInfo>();
         private ServerManagement.ExchangeInfo GlobaleErrorExchange;
 
-        public event Action<object, object> OnMessage;
+        public event Action<object,Type, object> OnMessage;
         public RabbitMessageAdapter(RabbitConectionInfo connectionInfo, ISerializer serializer, Func<BasicDeliverEventArgs, object> contextCreator)
         {
 
@@ -66,7 +66,7 @@ namespace Itas.Infrastructure.Messaging.RabbitAdapter
                         var param = serializer.FromStream(new System.IO.MemoryStream(theMessageRecieved.Body), bindingInfo.MessageType);
                         try
                         {
-                            OnMessage(param, contextCreator(theMessageRecieved));
+                            OnMessage(param,bindingInfo.HandlerType, contextCreator(theMessageRecieved));
                             model.BasicAck(theMessageRecieved.DeliveryTag, false);
                         }
                         catch (Exception ex)
@@ -83,7 +83,7 @@ namespace Itas.Infrastructure.Messaging.RabbitAdapter
                         var param = new RecievedMessageData(theMessageRecieved.Body, theMessageRecieved.BasicProperties.Headers);
                         try
                         {
-                            OnMessage(param, contextCreator(theMessageRecieved));
+                            OnMessage(param,bindingInfo.HandlerType, contextCreator(theMessageRecieved));
                             model.BasicAck(theMessageRecieved.DeliveryTag, false);
                         }
                         catch (Exception ex)

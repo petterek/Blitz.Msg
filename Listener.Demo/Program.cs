@@ -14,12 +14,14 @@ namespace Listener.Demo
         {
             var container = new SimpleFactory.Container(LifeTimeEnum.PerGraph);
             container.Register<MessageHandler<MyEventClass>, MyHandler>();
+            container.Register<GenericEventHandler>();
 
             RabbitConectionInfo connectionInfo = new RabbitConectionInfo { UserName = "guest", Password = "guest", Server = "localhost", ExchangeName = "Simployer", ClientName = "MyTestingApp" };
             IMessageAdapter messageProducer = new RabbitMessageAdapter(connectionInfo, new Serializer(), (e)=> new ClientContext());
 
             var server = new MessageHandlerEngine((t,c)=> container.CreateAnonymousInstance(t,c), messageProducer);
             server.Register<MyEventClass>();
+            server.RegisterExplicit<GenericEventHandler>("#");
 
             messageProducer.StartAdapter();
 
@@ -79,7 +81,13 @@ namespace Listener.Demo
     }
 
 
-
+    public class GenericEventHandler : GenericMessageHandlerBase
+    {
+        public override void Handle(RecievedMessageData param)
+        {
+            Console.WriteLine(param.GetType());
+        }
+    }
 
 
 }

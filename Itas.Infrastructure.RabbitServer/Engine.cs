@@ -64,23 +64,14 @@ namespace Itas.Infrastructure.MessageHost
         /// <summary>
         /// 
         /// </summary>
-        /// <param name="message"></param>
-        /// <param name="context"></param>
-        public void HandleTypedMessages(object message, object context)
+        /// <param name="message">The message revieved</param>
+        /// <param name="handler">The handler to handle this</param>
+        /// <param name="context">The object holding the context for this call</param>
+        public void HandleTypedMessages(object message,Type handler, object context)
         {
-            var instance = (IMessageHandler)handlerCreator(GetHandlerType(message.GetType()), context);
+            var instance = (IMessageHandler)handlerCreator(handler, context);
             instance.Handle(message);
         }
-
-        /// <summary>
-        /// 
-        /// </summary>
-        /// <param name="message"></param>
-        public void HandleAnonymousMessage(object message)
-        {
-
-        }
-
-
+        
     }
 }

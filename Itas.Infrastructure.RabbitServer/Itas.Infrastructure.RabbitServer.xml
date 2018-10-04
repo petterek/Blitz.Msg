@@ -29,18 +29,13 @@
             <typeparam name="TMessageHandler"></typeparam>
             <param name="messageName"></param>
         </member>
-        <member name="M:Itas.Infrastructure.MessageHost.MessageHandlerEngine.HandleTypedMessages(System.Object,System.Object)">
+        <member name="M:Itas.Infrastructure.MessageHost.MessageHandlerEngine.HandleTypedMessages(System.Object,System.Type,System.Object)">
             <summary>
             
             </summary>
-            <param name="message"></param>
-            <param name="context"></param>
-        </member>
-        <member name="M:Itas.Infrastructure.MessageHost.MessageHandlerEngine.HandleAnonymousMessage(System.Object)">
-            <summary>
-            
-            </summary>
-            <param name="message"></param>
+            <param name="message">The message revieved</param>
+            <param name="handler">The handler to handle this</param>
+            <param name="context">The object holding the context for this call</param>
         </member>
         <member name="T:Itas.Infrastructure.MessageHost.GenericMessageHandlerBase">
             <summary>
@@ -83,8 +78,9 @@
         </member>
         <member name="E:Itas.Infrastructure.MessageHost.IMessageAdapter.OnMessage">
             <summary>
-            First argument should be the message, and the second one should be the context. 
+            First argument should be the message,second is the handlertype for this message, and the third is the context. 
             The context is injected into the Container when the handler is created.
+            
             </summary>
         </member>
         <member name="M:Itas.Infrastructure.MessageHost.IMessageAdapter.StartAdapter">
