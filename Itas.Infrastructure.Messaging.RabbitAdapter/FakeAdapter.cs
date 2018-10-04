@@ -1,4 +1,9 @@
-﻿namespace Itas.Infrastructure.MessageHandler
+using Itas.Infrastructure.Context;
+using Itas.Infrastructure.MessageHost;
+using System;
+using System.Collections.Generic;
+
+namespace Itas.Infrastructure.Messaging.RabbitAdapter
 {
     public class FakeAdapter : IMessageAdapter
     {
@@ -11,15 +16,11 @@
 
         public event Action<object, object> OnMessage;
 
-        public void Bind(string routingKey, Type handler)
+        public void Bind(string routingKey, Type messageType, Type handler)
         {
 
         }
 
-        public void BindAnonymouse(string routingKey, Type handledBy)
-        {
-
-        }
 
         public void StartAdapter()
         {
@@ -69,6 +70,8 @@
             // TODO: uncomment the following line if the finalizer is overridden above.
             // GC.SuppressFinalize(this);
         }
+
+
         #endregion
     }
 

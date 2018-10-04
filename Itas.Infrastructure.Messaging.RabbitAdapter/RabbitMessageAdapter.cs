@@ -40,19 +40,19 @@ namespace Itas.Infrastructure.Messaging.RabbitAdapter
 
         public void StartAdapter()
         {
-            management = new ServerManagement(connectionInfo.ClientName, connectionFactory.CreateConnection(connectionInfo.ClientName), connectionFactory.CreateConnection(connectionInfo.ClientName),serializer);
-         
+            management = new ServerManagement(connectionInfo.ClientName, connectionFactory.CreateConnection(connectionInfo.ClientName), connectionFactory.CreateConnection(connectionInfo.ClientName), serializer);
+
             //Create globale Error Exchange, if not exists
-            management.CreateTopicExchange(connectionInfo.ExchangeName + "_GlobalErrorsExchange");
+            GlobaleErrorExchange = management.CreateTopicExchange(connectionInfo.ExchangeName + "_GlobalErrorsExchange");
 
             //Assert Dead Letter Exchange and Queue for this consumer.. 
             var dle = management.CreateTopicExchange(connectionInfo.ClientName + "_DeadLetterExchange");
             dle.CreateAndBindQueue(connectionInfo.ClientName + "_DeadLetterQueue", "#");
-                        
+
 
             foreach (var bindingInfo in bindingInfos)
             {
-                var theQueue = management.CreateQueueAndBind(bindingInfo.RoutingKey,connectionInfo.ExchangeName,dle.name).ConnectToExchange(connectionInfo.ExchangeName, bindingInfo.RoutingKey);
+                var theQueue = management.CreateQueueAndBind(bindingInfo.RoutingKey, connectionInfo.ExchangeName, dle.name).ConnectToExchange(connectionInfo.ExchangeName, bindingInfo.RoutingKey);
 
                 IModel model = management.CreateChannel();
                 model.BasicQos(0, 1, false);
@@ -72,6 +72,7 @@ namespace Itas.Infrastructure.Messaging.RabbitAdapter
                         catch (Exception ex)
                         {
                             model.BasicNack(theMessageRecieved.DeliveryTag, false, false);
+                            SendToError(theMessageRecieved);
                         }
                     };
                 }
@@ -101,6 +102,7 @@ namespace Itas.Infrastructure.Messaging.RabbitAdapter
             msg.CorrelationId = faildMessage.BasicProperties.CorrelationId;
             msg.MessageType = faildMessage.RoutingKey;
             msg.HandlerName = connectionInfo.ClientName;
+            msg.ServerName = Environment.MachineName;
 
             GlobaleErrorExchange.SendMessage(msg);
         }
@@ -168,8 +170,9 @@ namespace Itas.Infrastructure.Messaging.RabbitAdapter
 
     public class ErrorModel
     {
-        internal string CorrelationId;
-        internal string MessageType;
-        internal string HandlerName;
+        public string CorrelationId;
+        public string MessageType;
+        public string HandlerName;
+        public string ServerName;
     }
 }
