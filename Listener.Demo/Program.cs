@@ -12,22 +12,50 @@ namespace Listener.Demo
     {
         static void Main(string[] args)
         {
+            //Use any container.. 
             var container = new SimpleFactory.Container(LifeTimeEnum.PerGraph);
             container.Register<MessageHandler<MyEventClass>, MyHandler>();
             container.Register<GenericEventHandler>();
 
+            //Connectioninfo to the rabbit server. 
+            //The ClientName is important, as it is used in the infrastructure to indentify the host. 
             RabbitConectionInfo connectionInfo = new RabbitConectionInfo { UserName = "guest", Password = "guest", Server = "localhost", ExchangeName = "Simployer", ClientName = "MyTestingApp" };
-            IMessageAdapter messageProducer = new RabbitMessageAdapter(connectionInfo, new Serializer(), (e)=> new ClientContext());
 
-            var server = new MessageHandlerEngine((t,c)=> container.CreateAnonymousInstance(t,c), messageProducer);
+            //Create the RabbitAdapter. This is a spesific implementation for Rabbit.
+            IMessageAdapter messageAdapter = new RabbitMessageAdapter(
+                connectionInfo, 
+                //The serializer that will be used by the adapter. This must implement the ISerializer from Itas.Infrastructure.
+                new Serializer(), 
+                //This Func<BasicDeliveryEventArgs> gives you the chance to create a context value for your eventhandler.
+                //Setting the ClientContext e.g
+                (e)=> new ClientContext {
+                    CorrelationId =Guid.Parse(e.BasicProperties.CorrelationId),
+                    CompanyGuid = Guid.Parse(e.BasicProperties.Headers[Itas.Infrastructure.Context.HeaderNames.User].ToString()) }
+                );
+
+            //Then instanciate the MessageHandler.. Passing in the Adapter. 
+            var server = new MessageHandlerEngine(
+                messageAdapter,
+                //This Func<Type,object> is used instead of taking a dependency on a Container. 
+                //Here you can create your scope to for your context
+                (t,c)=> container.CreateAnonymousInstance(t,c));
+
+            //Register a typed handler for the Engine. 
+            //The engine will ask for an instance of  MessageHandle<MyEventClass> using the above Action<Type,object>. 
             server.Register<MyEventClass>();
+            
+            //Registering an untyped handler. 
+            //Will ask for an instance of the type mapped against this bindingkey. 
             server.RegisterExplicit<GenericEventHandler>("#");
 
-            messageProducer.StartAdapter();
+            //Start the adapter. 
+            //The infrastructure will be created on the rabbit server and the adapter will start to recieve the messages. 
+            messageAdapter.StartAdapter();
 
             Console.ReadLine();
 
-            messageProducer.StopAdapter();            
+            //Stop the Adapter to dispose the connections to Rabbit. 
+            messageAdapter.StopAdapter();            
         }
                      
        

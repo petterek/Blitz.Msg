@@ -31,7 +31,7 @@ namespace Itas.Infrastructure.MessageHost
         /// <param name="handlerCreator"></param>
         /// <param name="producer"></param>
 
-        public MessageHandlerEngine(Func<Type, object, object> handlerCreator, IMessageAdapter producer)
+        public MessageHandlerEngine(IMessageAdapter producer,Func<Type, object, object> handlerCreator )
         {
 
             this.handlerCreator = handlerCreator;
