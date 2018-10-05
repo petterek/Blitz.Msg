@@ -1,4 +1,5 @@
 using System;
+using System.ComponentModel;
 
 namespace Itas.Infrastructure.MessageHost
 {
@@ -31,5 +32,21 @@ namespace Itas.Infrastructure.MessageHost
         /// <param name="messageType"></param>
         /// <param name="handler"></param>
         void Bind(string routingKey,Type messageType, Type handler);
+    }
+
+
+    public class Example
+    {
+        private readonly IContainer container;
+
+        public Example(IContainer container)
+        {
+            this.container = container;
+        }
+
+        public void DoSomething()
+        {
+            
+        }
     }
 }
