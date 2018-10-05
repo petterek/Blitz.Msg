@@ -9,7 +9,7 @@
             
             </summary>
         </member>
-        <member name="M:Itas.Infrastructure.MessageHost.MessageHandlerEngine.#ctor(System.Func{System.Type,System.Object,System.Object},Itas.Infrastructure.MessageHost.IMessageAdapter)">
+        <member name="M:Itas.Infrastructure.MessageHost.MessageHandlerEngine.#ctor(Itas.Infrastructure.MessageHost.IMessageAdapter,System.Func{System.Type,System.Object,System.Object})">
             <summary>
             
             </summary>

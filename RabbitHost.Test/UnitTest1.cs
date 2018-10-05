@@ -65,7 +65,7 @@ namespace RabbitHost.Test
 
             adapter = new FakeAdapter(new List<object> { new SomethingHasHappend()}, new ClientContext { });
 
-            var Server = new MessageHandlerEngine((theType, ctx) => container.CreateAnonymousInstance(theType, ctx), adapter);
+            var Server = new MessageHandlerEngine(adapter,(theType, ctx) => container.CreateAnonymousInstance(theType, ctx));
 
             Server.Register<SomethingHasHappend>();
             Server.RegisterExplicit<MyGenericEventHandler>("#");
