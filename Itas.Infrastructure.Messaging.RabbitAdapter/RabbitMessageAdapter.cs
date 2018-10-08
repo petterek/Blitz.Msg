@@ -14,21 +14,21 @@ namespace Itas.Infrastructure.Messaging.RabbitAdapter
         private IConnection rabbitServerConnection;
         private ServerManagement management;
         private List<IModel> channels = new List<IModel>();
-        private RabbitConectionInfo connectionInfo;
+        private RabbitConnectionInfo connectionInfo;
         private readonly Context.ISerializer serializer;
         private readonly Func<BasicDeliverEventArgs, object> contextCreator;
         private List<BindingInfo> bindingInfos = new List<BindingInfo>();
         private ServerManagement.ExchangeInfo GlobaleErrorExchange;
 
         public event Action<object,Type, object> OnMessage;
-        public RabbitMessageAdapter(RabbitConectionInfo connectionInfo, ISerializer serializer, Func<BasicDeliverEventArgs, object> contextCreator)
+        public RabbitMessageAdapter(RabbitConnectionInfo connectionInfo, ISerializer serializer, Func<BasicDeliverEventArgs, object> contextCreator)
         {
 
             this.connectionFactory = new ConnectionFactory()
             {
                 HostName = connectionInfo.Server,
-                UserName = connectionInfo.UserName ?? "guest",
-                Password = connectionInfo.Password ?? "guest",
+                UserName = connectionInfo.UserName ,
+                Password = connectionInfo.Password ,
                 VirtualHost = connectionInfo.VirtualHost ?? "/"
             };
             connectionFactory.AutomaticRecoveryEnabled = true;

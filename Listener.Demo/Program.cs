@@ -19,7 +19,7 @@ namespace Listener.Demo
 
             //Connectioninfo to the rabbit server. 
             //The ClientName is important, as it is used in the infrastructure to indentify the host. 
-            RabbitConectionInfo connectionInfo = new RabbitConectionInfo { UserName = "guest", Password = "guest", Server = "localhost", ExchangeName = "Simployer", ClientName = "MyTestingApp" };
+            RabbitConnectionInfo connectionInfo = new RabbitConnectionInfo { UserName = "guest", Password = "guest", Server = "localhost", ExchangeName = "Simployer", ClientName = "MyTestingApp" };
 
             //Create the RabbitAdapter. This is a spesific implementation for Rabbit.
             IMessageAdapter messageAdapter = new RabbitMessageAdapter(

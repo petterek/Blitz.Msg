@@ -1,6 +1,6 @@
 ﻿namespace Itas.Infrastructure.Messaging.RabbitAdapter
 {
-    public class RabbitConectionInfo
+    public class RabbitConnectionInfo
     {
         public string Server;
         public string UserName;
