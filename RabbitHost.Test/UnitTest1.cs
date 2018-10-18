@@ -67,8 +67,8 @@ namespace RabbitHost.Test
 
             var Server = new MessageHandlerEngine(adapter,(theType, ctx) => container.CreateAnonymousInstance(theType, ctx));
 
-            Server.Register<SomethingHasHappend>();
-            Server.RegisterExplicit<MyGenericEventHandler>("#");
+            Server.AttachMessageHandler<SomethingHasHappend>();
+            Server.AttachGenericMessageHandler<MyGenericEventHandler>("#");
 
 
             adapter.StartAdapter();

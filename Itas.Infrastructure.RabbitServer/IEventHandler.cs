@@ -11,7 +11,7 @@ namespace Itas.Infrastructure.MessageHost
         /// 
         /// </summary>
         /// <param name="param"></param>
-        public void Handle(object param)
+        public  void Handle(object param)
         {
             Handle((T)param);
         }
@@ -27,7 +27,7 @@ namespace Itas.Infrastructure.MessageHost
     /// <summary>
     /// 
     /// </summary>
-    public interface IMessageHandler
+    interface IMessageHandler
     {
         /// <summary>
         /// Called internaly only.

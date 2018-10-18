@@ -6,7 +6,7 @@
 <body>
     <h1 id="what-does-this-do">What does this do?</h1>
 <p>It creates the infrastructure for reciving messages from RabbitMq.
-Also handles faild messages, they are posted to a Dead Letter Queue,</p>
+Also handles faild messages..</p>
 <h1 id="workflow-of-the-rabbit-adapter">Workflow of the Rabbit Adapter</h1>
 <ul>
 <li>Create 2 connections, one for incomming and one for outgoing messages</li>
@@ -36,6 +36,9 @@ Also handles faild messages, they are posted to a Dead Letter Queue,</p>
 <li>Call the Handle method</li>
 <li>ACK is sendt to rabbit, this removes the message from the queue;</li>
 </ul>
+<h2 id="naming-of-queues">Naming of queues</h2>
+<p>Queues will be named by convention.</p>
+<p><code>string QueueName = $&quot;{clientName}_{exchangeName}_{routingKey}&quot;;</code></p>
 <h2 id="when-handling-fails">When handling fails</h2>
 <ul>
 <li>Message is NACK'ed.</li>
@@ -62,10 +65,10 @@ Also handles faild messages, they are posted to a Dead Letter Queue,</p>
     var container = new SimpleFactory.Container(LifeTimeEnum.PerGraph);
     container.Register&lt;MessageHandler&lt;MyEventClass&gt;, MyHandler&gt;();
     container.Register&lt;GenericEventHandler&gt;();
-
+            
     //Connectioninfo to the rabbit server. 
     //The ClientName is important, as it is used in the infrastructure to indentify the host. 
-    RabbitConectionInfo connectionInfo = new RabbitConectionInfo { UserName = &quot;guest&quot;, Password = &quot;guest&quot;, Server = &quot;localhost&quot;, ExchangeName = &quot;Simployer&quot;, ClientName = &quot;MyTestingApp&quot; };
+    RabbitConnectionInfo connectionInfo = new RabbitConnectionInfo { UserName = &quot;guest&quot;, Password = &quot;guest&quot;, Server = &quot;localhost&quot;, ExchangeName = &quot;Simployer&quot;, ClientName = &quot;MyTestingApp&quot; };
 
     //Create the RabbitAdapter. This is a spesific implementation for Rabbit.
     IMessageAdapter messageAdapter = new RabbitMessageAdapter(
@@ -76,7 +79,7 @@ Also handles faild messages, they are posted to a Dead Letter Queue,</p>
         //Setting the ClientContext e.g
         (e)=&gt; new ClientContext {
             CorrelationId =Guid.Parse(e.BasicProperties.CorrelationId),
-            CompanyGuid = Guid.Parse(e.BasicProperties.Headers[Itas.Infrastructure.Context.HeaderNames.User].ToString()) }
+            CompanyGuid = Guid.Parse(e.BasicProperties.Headers[HeaderNames.Company].ToString()) }
         );
 
     //Then instanciate the MessageHandler.. Passing in the Adapter. 
@@ -88,22 +91,21 @@ Also handles faild messages, they are posted to a Dead Letter Queue,</p>
 
     //Register a typed handler for the Engine. 
     //The engine will ask for an instance of  MessageHandle&lt;MyEventClass&gt; using the above Action&lt;Type,object&gt;. 
-    server.Register&lt;MyEventClass&gt;();
+    server.AttachMessageHandler&lt;MyEventClass, MyHandler&gt;();
             
     //Registering an untyped handler. 
     //Will ask for an instance of the type mapped against this bindingkey. 
-    server.RegisterExplicit&lt;GenericEventHandler&gt;(&quot;#&quot;);
+    server.AttachGenericMessageHandler&lt;GenericEventHandler&gt;(&quot;#&quot;);
 
-    //Start the adapter. 
+    //Start the server. 
     //The infrastructure will be created on the rabbit server and the adapter will start to recieve the messages. 
-    messageAdapter.StartAdapter();
+    server.StartServer();
 
     Console.ReadLine();
 
-    //Stop the Adapter to dispose the connections to Rabbit. 
-    messageAdapter.StopAdapter();            
-}
-                     
+    //Stop the server to dispose the connections to Rabbit. 
+    server.StopServer();
+}                     
 </code></pre>
 
     <script>

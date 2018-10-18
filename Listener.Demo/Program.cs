@@ -16,7 +16,7 @@ namespace Listener.Demo
             var container = new SimpleFactory.Container(LifeTimeEnum.PerGraph);
             container.Register<MessageHandler<MyEventClass>, MyHandler>();
             container.Register<GenericEventHandler>();
-
+            
             //Connectioninfo to the rabbit server. 
             //The ClientName is important, as it is used in the infrastructure to indentify the host. 
             RabbitConnectionInfo connectionInfo = new RabbitConnectionInfo { UserName = "guest", Password = "guest", Server = "localhost", ExchangeName = "Simployer", ClientName = "MyTestingApp" };
@@ -30,7 +30,7 @@ namespace Listener.Demo
                 //Setting the ClientContext e.g
                 (e)=> new ClientContext {
                     CorrelationId =Guid.Parse(e.BasicProperties.CorrelationId),
-                    CompanyGuid = Guid.Parse(e.BasicProperties.Headers[Itas.Infrastructure.Context.HeaderNames.User].ToString()) }
+                    CompanyGuid = Guid.Parse(e.BasicProperties.Headers[HeaderNames.Company].ToString()) }
                 );
 
             //Then instanciate the MessageHandler.. Passing in the Adapter. 
@@ -42,20 +42,20 @@ namespace Listener.Demo
 
             //Register a typed handler for the Engine. 
             //The engine will ask for an instance of  MessageHandle<MyEventClass> using the above Action<Type,object>. 
-            server.Register<MyEventClass>();
+            server.AttachMessageHandler<MyEventClass, MyHandler>();
             
             //Registering an untyped handler. 
             //Will ask for an instance of the type mapped against this bindingkey. 
-            server.RegisterExplicit<GenericEventHandler>("#");
+            server.AttachGenericMessageHandler<GenericEventHandler>("#");
 
-            //Start the adapter. 
+            //Start the server. 
             //The infrastructure will be created on the rabbit server and the adapter will start to recieve the messages. 
-            messageAdapter.StartAdapter();
+            server.StartServer();
 
             Console.ReadLine();
 
-            //Stop the Adapter to dispose the connections to Rabbit. 
-            messageAdapter.StopAdapter();            
+            //Stop the server to dispose the connections to Rabbit. 
+            server.StopServer();
         }
                      
        
