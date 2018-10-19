@@ -4,7 +4,9 @@
 It creates the infrastructure for reciving messages from RabbitMq. 
 Also handles faild messages..
 
+# Prerequisites
 
+* The Exchange must be manually declared on rabbit instance for the Rabbit adapter to work
 
 # Workflow of the Rabbit Adapter
 
