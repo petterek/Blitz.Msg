@@ -1,6 +1,6 @@
+using Itas.Infrastructure.Consumer;
 using Itas.Infrastructure.Context;
-using Itas.Infrastructure.MessageHost;
-using Itas.Infrastructure.Messaging.RabbitAdapter;
+using Itas.Infrastructure.Messaging.RabbitConsumer;
 using NUnit.Framework;
 using System;
 using System.Collections.Generic;
@@ -67,7 +67,7 @@ namespace RabbitHost.Test
 
             var Server = new MessageHandlerEngine(adapter,(theType, ctx) => container.CreateAnonymousInstance(theType, ctx));
 
-            Server.AttachMessageHandler<SomethingHasHappend>();
+            Server.AttachMessageHandler<SomethingHasHappend,MyHandler>();
             Server.AttachGenericMessageHandler<MyGenericEventHandler>("#");
 
 

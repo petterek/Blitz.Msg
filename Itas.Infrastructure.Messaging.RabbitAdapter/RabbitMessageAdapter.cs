@@ -1,11 +1,11 @@
-﻿using Itas.Infrastructure.Context;
-using Itas.Infrastructure.MessageHost;
+using Itas.Infrastructure.Consumer;
+using Itas.Infrastructure.Context;
 using RabbitMQ.Client;
 using RabbitMQ.Client.Events;
 using System;
 using System.Collections.Generic;
 
-namespace Itas.Infrastructure.Messaging.RabbitAdapter
+namespace Itas.Infrastructure.Messaging.RabbitConsumer
 {
     public class RabbitMessageAdapter : IMessageAdapter
     {

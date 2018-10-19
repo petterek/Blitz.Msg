@@ -1,4 +1,4 @@
-﻿namespace Itas.Infrastructure.Messaging.RabbitAdapter
+namespace Itas.Infrastructure.Messaging.RabbitConsumer
 {
     public class RabbitConnectionInfo
     {

@@ -1,7 +1,7 @@
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 
-namespace Itas.Infrastructure.MessageHost
+namespace Itas.Infrastructure.Consumer
 {
   /// <summary>
   /// 

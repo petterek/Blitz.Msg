@@ -1,10 +1,10 @@
-﻿using Itas.Infrastructure.Context;
+using Itas.Infrastructure.Context;
 using RabbitMQ.Client;
 using System;
 using System.Collections.Generic;
 using System.IO;
 
-namespace Itas.Infrastructure.Messaging.RabbitAdapter
+namespace Itas.Infrastructure.Messaging.RabbitConsumer
 {
     public class ServerManagement : IDisposable
     {

@@ -1,7 +1,7 @@
 using System;
 using System.ComponentModel;
 
-namespace Itas.Infrastructure.MessageHost
+namespace Itas.Infrastructure.Consumer
 {
     /// <summary>
     /// 

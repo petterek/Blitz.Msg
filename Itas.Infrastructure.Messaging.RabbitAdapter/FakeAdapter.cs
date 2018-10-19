@@ -1,9 +1,9 @@
+using Itas.Infrastructure.Consumer;
 using Itas.Infrastructure.Context;
-using Itas.Infrastructure.MessageHost;
 using System;
 using System.Collections.Generic;
 
-namespace Itas.Infrastructure.Messaging.RabbitAdapter
+namespace Itas.Infrastructure.Messaging.RabbitConsumer
 {
     public class FakeAdapter : IMessageAdapter
     {

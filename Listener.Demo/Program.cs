@@ -1,6 +1,6 @@
-﻿using Itas.Infrastructure.Context;
-using Itas.Infrastructure.MessageHost;
-using Itas.Infrastructure.Messaging.RabbitAdapter;
+﻿using Itas.Infrastructure.Consumer;
+using Itas.Infrastructure.Context;
+using Itas.Infrastructure.Messaging.RabbitConsumer;
 using SimpleFactory.Contract;
 using System;
 using System.IO;

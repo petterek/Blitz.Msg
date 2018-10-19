@@ -12,8 +12,8 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\Itas.Infrastructure.Messaging.RabbitAdapter\Itas.Infrastructure.Messaging.RabbitAdapter.csproj" />
-    <ProjectReference Include="..\Itas.Infrastructure.RabbitServer\Itas.Infrastructure.MessageHost.csproj" />
+    <ProjectReference Include="..\Itas.Infrastructure.Messaging.RabbitAdapter\Itas.Infrastructure.Messaging.RabbitConsumer.csproj" />
+    <ProjectReference Include="..\Itas.Infrastructure.RabbitServer\Itas.Infrastructure.Consumer.csproj" />
   </ItemGroup>
 
 </Project>
