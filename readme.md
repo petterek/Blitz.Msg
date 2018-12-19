@@ -4,7 +4,7 @@
 It creates the infrastructure for reciving messages from RabbitMq. 
 Also handles faild messages..
 
-Look in the Demo folder to se the usage as well
+Look in the Demo folder to se the usage as wellgit
 
 # Prerequisites
 
@@ -118,3 +118,71 @@ This is a piece of software that takes the burden off the developer when publish
 
 It is made as a "singleton" component and should only be instanciated once. Use a "scoped" or "transient" objct that takes this object as a dependency to capture the customer/user context.
 
+```csharp
+ class Program
+    {
+        static void Main(string[] args)
+        {
+            var container = new SimpleFactory.Container();
+            var con = new RabbitConnectionInfo
+            {
+                ClientName = "Listner.Demo",
+                ExchangeName = "Simployer",
+                Server = "localhost",
+                UserName = "guest",
+                Password = "guest",
+                VirtualHost = "/"
+            };
+
+            var pub = new PublishEventToRabbit(con, new Serializer());
+
+            container.Register<PublishEventToRabbit>(() => pub).AsSingleton(); //This is singleton to hold the connection stuff for rabbit. Must be disposed
+            container.Register<CustomPublisher>().Transient(); //This is the wrapper to capture the context of the current call
+            container.Register<ApplicationContext>(); // this is the actual context.. Very simplefied :) 
+
+            for (var x = 0; x < 10; x++)
+            {
+                var sender = container.CreateInstance<CustomPublisher>();
+                sender.Publish(new SomethingOccured());
+            }
+
+            pub.Dispose();
+        }
+    }
+
+
+
+    public class CustomPublisher
+    {
+        readonly PublishEventToRabbit toRabbit;
+        readonly ApplicationContext context;
+
+        public CustomPublisher(PublishEventToRabbit toRabbit, ApplicationContext context)
+        {
+            this.context = context;
+            this.toRabbit = toRabbit;
+        }
+
+
+        public void Publish(object message)
+        {
+            var ctx = new RabbitEventContext {CorrelationId=context.CorrelationId, CustomerId=context.CompanyGuid, UserId=context.UserId};
+
+            toRabbit.Publish(ctx, message);
+        }
+
+    }
+
+    public class ApplicationContext
+    {
+        public Guid CorrelationId = Guid.NewGuid();
+        public Guid UserId = Guid.NewGuid();
+        public Guid CompanyGuid = Guid.NewGuid();
+    }
+
+    public class MyMessage
+    {
+        public int Number;
+    }
+
+```
