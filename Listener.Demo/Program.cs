@@ -105,7 +105,7 @@ namespace Listener.Demo
 
         public override void Handle(SomethingOccured param)
         {
-
+            Console.WriteLine(param.Message);
         }
     }
 

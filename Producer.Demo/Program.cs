@@ -30,7 +30,7 @@ namespace Producer.Demo
             for (var x = 0; x < 10; x++)
             {
                 var sender = container.CreateInstance<CustomPublisher>();
-                sender.Publish(new SomethingOccured());
+                sender.Publish(new SomethingOccured {Message=$"This is message number{x}" });
             }
 
             pub.Dispose();
