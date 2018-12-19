@@ -4,6 +4,8 @@
 It creates the infrastructure for reciving messages from RabbitMq. 
 Also handles faild messages..
 
+Look in the Demo folder to se the usage as well
+
 # Prerequisites
 
 * The Exchange must be manually declared on rabbit instance for the Rabbit adapter to work
@@ -63,23 +65,25 @@ static void Main(string[] args)
 {
     //Use any container.. 
     var container = new SimpleFactory.Container(LifeTimeEnum.PerGraph);
-    container.Register<MessageHandler<MyEventClass>, MyHandler>();
-    container.Register<GenericEventHandler>();
-            
+    container.Register<MyHandler>();
+
     //Connectioninfo to the rabbit server. 
     //The ClientName is important, as it is used in the infrastructure to indentify the host. 
     RabbitConnectionInfo connectionInfo = new RabbitConnectionInfo { UserName = "guest", Password = "guest", Server = "localhost", ExchangeName = "Simployer", ClientName = "MyTestingApp" };
 
     //Create the RabbitAdapter. This is a spesific implementation for Rabbit.
     IMessageAdapter messageAdapter = new RabbitMessageAdapter(
-        connectionInfo, 
-        //The serializer that will be used by the adapter. This must implement the ISerializer from Itas.Infrastructure.
-        new Serializer(), 
-        //This Func<BasicDeliveryEventArgs> gives you the chance to create a context value for your eventhandler.
-        //Setting the ClientContext e.g
-        (e)=> new ClientContext {
-            CorrelationId =Guid.Parse(e.BasicProperties.CorrelationId),
-            CompanyGuid = new Guid(System.Text.Encoding.UTF8.GetString( (byte[]) e.BasicProperties.Headers[HeaderNames.Company] ) )}
+            connectionInfo,
+            //The serializer that will be used by the adapter. This must implement the ISerializer from Itas.Infrastructure.
+            new Serializer(),
+            //This Func<BasicDeliveryEventArgs> gives you the chance to create a context value for your eventhandler.
+            //Setting the ClientContext e.g
+            (eventArgs) => new ClientContext
+            {
+                CorrelationId = eventArgs.GetCorrelationId(),
+                CompanyGuid = eventArgs.GetCustomerGuid(),
+                UserGuid = eventArgs.GetUserGuid()
+            }
         );
 
     //Then instanciate the MessageHandler.. Passing in the Adapter. 
@@ -87,12 +91,13 @@ static void Main(string[] args)
         messageAdapter,
         //This Func<Type,object> is used instead of taking a dependency on a Container. 
         //Here you can create your scope to for your context
-        (t,c)=> container.CreateAnonymousInstance(t,c));
+
+        (t, c) => container.CreateAnonymousInstance(t, c));
 
     //Register a typed handler for the Engine. 
     //The engine will ask for an instance of  MessageHandle<MyEventClass> using the above Action<Type,object>. 
-    server.AttachMessageHandler<MyEventClass, MyHandler>();
-            
+    server.AttachMessageHandler<SomethingOccured, MyHandler>();
+
     //Registering an untyped handler. 
     //Will ask for an instance of the type mapped against this bindingkey. 
     server.AttachGenericMessageHandler<GenericEventHandler>("#");
@@ -105,5 +110,11 @@ static void Main(string[] args)
 
     //Stop the server to dispose the connections to Rabbit. 
     server.StopServer();
-}                     
+}
 ```
+
+## Producing messages for RabbitMQ
+This is a piece of software that takes the burden off the developer when publishing messages/events to RabbitMQ. 
+
+It is made as a "singleton" component and should only be instanciated once. Use a "scoped" or "transient" objct that takes this object as a dependency to capture the customer/user context.
+

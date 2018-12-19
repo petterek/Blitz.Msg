@@ -1,4 +1,5 @@
 ﻿using Demo.Events;
+using Itas.Infrastructure.Messaging.RabbitProducer;
 using System;
 using System.IO;
 using System.Threading.Tasks;
@@ -9,7 +10,8 @@ namespace Producer.Demo
     {
         static void Main(string[] args)
         {
-            var con = new Itas.Infrastructure.Messaging.RabbitProducer.RabbitConnectionInfo
+            var container = new SimpleFactory.Container();
+            var con = new RabbitConnectionInfo
             {
                 ClientName = "Listner.Demo",
                 ExchangeName = "Simployer",
@@ -19,14 +21,16 @@ namespace Producer.Demo
                 VirtualHost = "/"
             };
 
-            var pub = new Itas.Infrastructure.Messaging.RabbitProducer.PublishEventToRabbit(con, new Serializer());
+            var pub = new PublishEventToRabbit(con, new Serializer());
+
+            container.Register<PublishEventToRabbit>(() => pub).AsSingleton(); //This is singleton to hold the connection stuff for rabbit. Must be disposed
+            container.Register<CustomPublisher>().Transient(); //This is the wrapper to capture the context of the current call
+            container.Register<ApplicationContext>(); // this is the actual context.. Very simplefied :) 
 
             for (var x = 0; x < 10; x++)
             {
-                pub.Publish(
-                    new Itas.Infrastructure.Messaging.RabbitProducer.RabbitEventContext { CorrelationId = Guid.NewGuid(), CustomerId = Guid.NewGuid(), UserId = Guid.NewGuid() },
-                    new SomethingOccured { Hallo = x, Message = "Heisann" }
-                    );
+                var sender = container.CreateInstance<CustomPublisher>();
+                sender.Publish(new SomethingOccured());
             }
 
             pub.Dispose();
@@ -34,6 +38,34 @@ namespace Producer.Demo
     }
 
 
+
+    public class CustomPublisher
+    {
+        readonly PublishEventToRabbit toRabbit;
+        readonly ApplicationContext context;
+
+        public CustomPublisher(PublishEventToRabbit toRabbit, ApplicationContext context)
+        {
+            this.context = context;
+            this.toRabbit = toRabbit;
+        }
+
+
+        public void Publish(object message)
+        {
+            var ctx = new RabbitEventContext {CorrelationId=context.CorrelationId, CustomerId=context.CompanyGuid, UserId=context.UserId};
+
+            toRabbit.Publish(ctx, message);
+        }
+
+    }
+
+    public class ApplicationContext
+    {
+        public Guid CorrelationId = Guid.NewGuid();
+        public Guid UserId = Guid.NewGuid();
+        public Guid CompanyGuid = Guid.NewGuid();
+    }
 
     public class MyMessage
     {
