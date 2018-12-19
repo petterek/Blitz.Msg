@@ -83,5 +83,4 @@ namespace Itas.Infrastructure.Messaging.RabbitConsumer
 
         #endregion
     }
-
 }

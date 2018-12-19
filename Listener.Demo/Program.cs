@@ -1,4 +1,5 @@
-﻿using Itas.Infrastructure.Consumer;
+﻿using Demo.Events;
+using Itas.Infrastructure.Consumer;
 using Itas.Infrastructure.Context;
 using Itas.Infrastructure.Messaging.RabbitConsumer;
 using SimpleFactory.Contract;
@@ -14,23 +15,25 @@ namespace Listener.Demo
         {
             //Use any container.. 
             var container = new SimpleFactory.Container(LifeTimeEnum.PerGraph);
-            container.Register<MessageHandler<MyEventClass>, MyHandler>();
-            container.Register<GenericEventHandler>();
-            
+            container.Register<MyHandler>();
+
             //Connectioninfo to the rabbit server. 
             //The ClientName is important, as it is used in the infrastructure to indentify the host. 
             RabbitConnectionInfo connectionInfo = new RabbitConnectionInfo { UserName = "guest", Password = "guest", Server = "localhost", ExchangeName = "Simployer", ClientName = "MyTestingApp" };
 
             //Create the RabbitAdapter. This is a spesific implementation for Rabbit.
             IMessageAdapter messageAdapter = new RabbitMessageAdapter(
-                connectionInfo, 
-                //The serializer that will be used by the adapter. This must implement the ISerializer from Itas.Infrastructure.
-                new Serializer(), 
-                //This Func<BasicDeliveryEventArgs> gives you the chance to create a context value for your eventhandler.
-                //Setting the ClientContext e.g
-                (e)=> new ClientContext {
-                    CorrelationId =Guid.Parse(e.BasicProperties.CorrelationId),
-                    CompanyGuid = Guid.Parse(e.BasicProperties.Headers[HeaderNames.Company].ToString()) }
+                    connectionInfo,
+                    //The serializer that will be used by the adapter. This must implement the ISerializer from Itas.Infrastructure.
+                    new Serializer(),
+                    //This Func<BasicDeliveryEventArgs> gives you the chance to create a context value for your eventhandler.
+                    //Setting the ClientContext e.g
+                    (eventArgs) => new ClientContext
+                    {
+                        CorrelationId = eventArgs.GetCorrelationId(),
+                        CompanyGuid = eventArgs.GetCustomerGuid(),
+                        UserGuid = eventArgs.GetUserGuid()
+                    }
                 );
 
             //Then instanciate the MessageHandler.. Passing in the Adapter. 
@@ -38,15 +41,16 @@ namespace Listener.Demo
                 messageAdapter,
                 //This Func<Type,object> is used instead of taking a dependency on a Container. 
                 //Here you can create your scope to for your context
-                (t,c)=> container.CreateAnonymousInstance(t,c));
+
+                (t, c) => container.CreateAnonymousInstance(t, c));
 
             //Register a typed handler for the Engine. 
             //The engine will ask for an instance of  MessageHandle<MyEventClass> using the above Action<Type,object>. 
-            server.AttachMessageHandler<MyEventClass, MyHandler>();
-            
+            server.AttachMessageHandler<SomethingOccured, MyHandler>();
+
             //Registering an untyped handler. 
             //Will ask for an instance of the type mapped against this bindingkey. 
-            server.AttachGenericMessageHandler<GenericEventHandler>("#");
+            //server.AttachGenericMessageHandler<GenericEventHandler>("#");
 
             //Start the server. 
             //The infrastructure will be created on the rabbit server and the adapter will start to recieve the messages. 
@@ -57,8 +61,8 @@ namespace Listener.Demo
             //Stop the server to dispose the connections to Rabbit. 
             server.StopServer();
         }
-                     
-       
+
+
     }
 
     public class Serializer : ISerializer
@@ -94,17 +98,14 @@ namespace Listener.Demo
         }
     }
 
-    public class MyEventClass
-    {
-        public string Data;
-    }
 
-    internal class MyHandler : MessageHandler<MyEventClass>
+
+    internal class MyHandler : MessageHandler<SomethingOccured>
     {
 
-        public override void Handle(MyEventClass param)
+        public override void Handle(SomethingOccured param)
         {
-            throw new NotImplementedException();
+
         }
     }
 

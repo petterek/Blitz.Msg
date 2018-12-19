@@ -1,0 +1,17 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <OutputType>Exe</OutputType>
+    <TargetFramework>netcoreapp2.2</TargetFramework>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="miniJson" Version="1.1.2" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\Demo.Events\Demo.Events.csproj" />
+    <ProjectReference Include="..\Itas.Infrastructure.Messaging.RabbitProducer\Itas.Infrastructure.Messaging.RabbitProducer.csproj" />
+  </ItemGroup>
+
+</Project>

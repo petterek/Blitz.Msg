@@ -7,6 +7,10 @@
     <h1 id="what-does-this-do">What does this do?</h1>
 <p>It creates the infrastructure for reciving messages from RabbitMq.
 Also handles faild messages..</p>
+<h1 id="prerequisites">Prerequisites</h1>
+<ul>
+<li>The Exchange must be manually declared on rabbit instance for the Rabbit adapter to work</li>
+</ul>
 <h1 id="workflow-of-the-rabbit-adapter">Workflow of the Rabbit Adapter</h1>
 <ul>
 <li>Create 2 connections, one for incomming and one for outgoing messages</li>
@@ -79,7 +83,7 @@ Also handles faild messages..</p>
         //Setting the ClientContext e.g
         (e)=&gt; new ClientContext {
             CorrelationId =Guid.Parse(e.BasicProperties.CorrelationId),
-            CompanyGuid = Guid.Parse(e.BasicProperties.Headers[HeaderNames.Company].ToString()) }
+            CompanyGuid = new Guid(System.Text.Encoding.UTF8.GetString( (byte[]) e.BasicProperties.Headers[HeaderNames.Company] ) )}
         );
 
     //Then instanciate the MessageHandler.. Passing in the Adapter. 

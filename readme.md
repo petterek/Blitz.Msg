@@ -79,7 +79,7 @@ static void Main(string[] args)
         //Setting the ClientContext e.g
         (e)=> new ClientContext {
             CorrelationId =Guid.Parse(e.BasicProperties.CorrelationId),
-            CompanyGuid = Guid.Parse(e.BasicProperties.Headers[HeaderNames.Company].ToString()) }
+            CompanyGuid = new Guid(System.Text.Encoding.UTF8.GetString( (byte[]) e.BasicProperties.Headers[HeaderNames.Company] ) )}
         );
 
     //Then instanciate the MessageHandler.. Passing in the Adapter. 

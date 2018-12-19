@@ -50,24 +50,17 @@ namespace RabbitHost.Test
         public void SetupLooksGood()
         {
             var container = new SimpleFactory.Container();
-            container.Register<MessageHandler<SomethingHasHappend>, MyHandler>().AsSingleton();
-            
+            container.Register<MyHandler>().AsSingleton();
+
             container.Register<MyGenericEventHandler>();
 
             IMessageAdapter adapter;
 
-            //adapter = new RabbitMessageAdapter(
-            //    new RabbitConectionInfo { UserName = "guest", Password = "guest", Server = "localhost", ExchangeName = "Simployer", ClientName = "MyTestingApp" }, 
-            //    new Serializer(), (recievedEvent)=> {
-            //        var ctx = new ClientContext();
-            //        return ctx;
-            //    } );
+            adapter = new FakeAdapter(new List<object> { new SomethingHasHappend() }, new ClientContext { });
 
-            adapter = new FakeAdapter(new List<object> { new SomethingHasHappend()}, new ClientContext { });
+            var Server = new MessageHandlerEngine(adapter, (theType, ctx) => container.CreateAnonymousInstance(theType, ctx));
 
-            var Server = new MessageHandlerEngine(adapter,(theType, ctx) => container.CreateAnonymousInstance(theType, ctx));
-
-            Server.AttachMessageHandler<SomethingHasHappend,MyHandler>();
+            Server.AttachMessageHandler<SomethingHasHappend, MyHandler>();
             Server.AttachGenericMessageHandler<MyGenericEventHandler>("#");
 
 
@@ -78,12 +71,12 @@ namespace RabbitHost.Test
             adapter.StopAdapter();
 
             Assert.IsNotNull(((MyHandler)container.CreateInstance<MessageHandler<SomethingHasHappend>>()).input);
-            Assert.AreEqual(1,((MyHandler)container.CreateInstance<MessageHandler<SomethingHasHappend>>()).Counter);
+            Assert.AreEqual(1, ((MyHandler)container.CreateInstance<MessageHandler<SomethingHasHappend>>()).Counter);
         }
-        
+
     }
 
-    
+
 
     public class MyGenericEventHandler : GenericMessageHandlerBase
     {

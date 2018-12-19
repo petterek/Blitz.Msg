@@ -12,6 +12,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\Demo.Events\Demo.Events.csproj" />
     <ProjectReference Include="..\Itas.Infrastructure.Messaging.RabbitAdapter\Itas.Infrastructure.Messaging.RabbitConsumer.csproj" />
     <ProjectReference Include="..\Itas.Infrastructure.RabbitServer\Itas.Infrastructure.Consumer.csproj" />
   </ItemGroup>
