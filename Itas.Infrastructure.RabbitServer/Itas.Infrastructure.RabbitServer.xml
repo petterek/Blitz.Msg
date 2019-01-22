@@ -30,13 +30,13 @@
             <typeparam name="TMessageHandler"></typeparam>
             <param name="messageName"></param>
         </member>
-        <member name="M:Itas.Infrastructure.Consumer.MessageHandlerEngine.HandleTypedMessages(System.Object,System.Type,System.Object)">
+        <member name="M:Itas.Infrastructure.Consumer.MessageHandlerEngine.HandleTypedMessages(System.Object,System.Type,System.Action{System.IServiceProvider})">
             <summary>
             
             </summary>
             <param name="message">The message revieved</param>
             <param name="handler">The handler to handle this</param>
-            <param name="context">The object holding the context for this call</param>
+            <param name="preHandle"></param>
         </member>
         <member name="M:Itas.Infrastructure.Consumer.MessageHandlerEngine.StartServer">
             <summary>

@@ -8,10 +8,9 @@ namespace Itas.Infrastructure.Messaging.RabbitConsumer
     public class FakeAdapter : IMessageAdapter
     {
 
-        public FakeAdapter(List<object> messages, ClientContext ctx)
+        public FakeAdapter(List<object> messages)
         {
             this.messages = messages;
-            this.ctx = ctx;
         }
 
         public event Action<object, Type, Action<IServiceProvider>> OnMessage;

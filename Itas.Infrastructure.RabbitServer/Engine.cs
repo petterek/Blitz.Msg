@@ -70,16 +70,15 @@ namespace Itas.Infrastructure.Consumer
         /// </summary>
         /// <param name="message">The message revieved</param>
         /// <param name="handler">The handler to handle this</param>
-        /// <param name="context">The object holding the context for this call</param>
-        public void HandleTypedMessages(object message, Type handler, object context)
+        /// <param name="preHandle"></param>
+        public void HandleTypedMessages(object message, Type handler, Action<IServiceProvider> preHandle )
         {
-
-
-
+                       
             var s = createScope();
             try
             {
-                var instance = ((Func<object, IMessageHandler>)s.GetService(typeof(Func<Type, object, IMessageHandler>)))(context) ;
+                preHandle(s);
+                var instance = (IMessageHandler)s.GetService(handler) ;
                 instance.Handle(message);
             }
             finally

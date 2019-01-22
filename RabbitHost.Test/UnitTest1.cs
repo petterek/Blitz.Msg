@@ -56,7 +56,7 @@ namespace RabbitHost.Test
 
             IMessageAdapter adapter;
 
-            adapter = new FakeAdapter(new List<object> { new SomethingHasHappend() }, new ClientContext { });
+            adapter = new FakeAdapter(new List<object> { new SomethingHasHappend() });
 
             var Server = new MessageHandlerEngine(adapter,
                 () => new SimpleFactory.SimplefactoryProvider(container) 
@@ -96,14 +96,11 @@ namespace RabbitHost.Test
 
     public class MyHandler : MessageHandler<SomethingHasHappend>
     {
-        private readonly ClientContext ctx;
+        
         public SomethingHasHappend input;
         public int Counter = 0;
 
-        //public MyHandler(ClientContext ctx)
-        //{
-        //    this.ctx = ctx;
-        //}
+        
 
         public override void Handle(SomethingHasHappend param)
         {
