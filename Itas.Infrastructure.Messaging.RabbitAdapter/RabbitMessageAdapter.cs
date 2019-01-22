@@ -9,19 +9,18 @@ namespace Itas.Infrastructure.Messaging.RabbitConsumer
 {
     public class RabbitMessageAdapter : IMessageAdapter
     {
-
         private readonly ConnectionFactory connectionFactory;
-        private IConnection rabbitServerConnection;
         private ServerManagement management;
         private List<IModel> channels = new List<IModel>();
         private RabbitConnectionInfo connectionInfo;
         private readonly Context.ISerializer serializer;
-        private readonly Func<BasicDeliverEventArgs, object> contextCreator;
+        private readonly Action<IServiceProvider,BasicDeliverEventArgs, object> contextCreator;
         private List<BindingInfo> bindingInfos = new List<BindingInfo>();
         private ServerManagement.ExchangeInfo GlobaleErrorExchange;
 
-        public event Action<object,Type, object> OnMessage;
-        public RabbitMessageAdapter(RabbitConnectionInfo connectionInfo, ISerializer serializer, Func<BasicDeliverEventArgs, object> contextCreator)
+        public event Action<object,Type, Action<IServiceProvider>> OnMessage;
+
+        public RabbitMessageAdapter(RabbitConnectionInfo connectionInfo, ISerializer serializer, Action<IServiceProvider, BasicDeliverEventArgs, object> contextCreator)
         {
 
             this.connectionFactory = new ConnectionFactory()
@@ -66,7 +65,7 @@ namespace Itas.Infrastructure.Messaging.RabbitConsumer
                         var param = serializer.FromStream(new System.IO.MemoryStream(theMessageRecieved.Body), bindingInfo.MessageType);
                         try
                         {
-                            OnMessage(param,bindingInfo.HandlerType, contextCreator(theMessageRecieved));
+                            OnMessage(param,bindingInfo.HandlerType,(sp)=> contextCreator(sp,theMessageRecieved,param));
                             model.BasicAck(theMessageRecieved.DeliveryTag, false);
                         }
                         catch (Exception ex)
@@ -83,7 +82,7 @@ namespace Itas.Infrastructure.Messaging.RabbitConsumer
                         var param = new RecievedMessageData(theMessageRecieved.Body, theMessageRecieved.BasicProperties.Headers);
                         try
                         {
-                            OnMessage(param,bindingInfo.HandlerType, contextCreator(theMessageRecieved));
+                            OnMessage(param,bindingInfo.HandlerType,(sp)=>contextCreator(sp,theMessageRecieved, param));
                             model.BasicAck(theMessageRecieved.DeliveryTag, false);
                         }
                         catch (Exception ex)
@@ -123,7 +122,7 @@ namespace Itas.Infrastructure.Messaging.RabbitConsumer
 
         #region IDisposable Support
         private bool disposedValue = false; // To detect redundant calls
-
+                
         protected virtual void Dispose(bool disposing)
         {
             if (!disposedValue)

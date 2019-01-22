@@ -2,7 +2,6 @@
 using Itas.Infrastructure.Consumer;
 using Itas.Infrastructure.Context;
 using Itas.Infrastructure.Messaging.RabbitConsumer;
-using SimpleFactory.Contract;
 using System;
 using System.IO;
 using System.Threading.Tasks;
@@ -14,8 +13,9 @@ namespace Listener.Demo
         static void Main(string[] args)
         {
             //Use any container.. 
-            var container = new SimpleFactory.Container(LifeTimeEnum.PerGraph);
-            container.Register<MyHandler>();
+            var container = new SimpleFactory.Container();
+            
+            container.Register<MyHandler>().Scoped();
 
             //Connectioninfo to the rabbit server. 
             //The ClientName is important, as it is used in the infrastructure to indentify the host. 
@@ -28,7 +28,7 @@ namespace Listener.Demo
                     new Serializer(),
                     //This Func<BasicDeliveryEventArgs> gives you the chance to create a context value for your eventhandler.
                     //Setting the ClientContext e.g
-                    (eventArgs) => new ClientContext
+                    (sp,eventArgs,data) => new ClientContext
                     {
                         CorrelationId = eventArgs.GetCorrelationId(),
                         CompanyGuid = eventArgs.GetCustomerGuid(),
@@ -41,9 +41,7 @@ namespace Listener.Demo
                 messageAdapter,
                 //This Func<Type,object> is used instead of taking a dependency on a Container. 
                 //Here you can create your scope to for your context
-
-                (t, c) => container.CreateAnonymousInstance(t, c));
-
+                () => new SimpleFactory.SimplefactoryProvider(container));
             //Register a typed handler for the Engine. 
             //The engine will ask for an instance of  MessageHandle<MyEventClass> using the above Action<Type,object>. 
             server.AttachMessageHandler<SomethingOccured, MyHandler>();
@@ -97,7 +95,6 @@ namespace Listener.Demo
             throw new NotImplementedException();
         }
     }
-
 
 
     internal class MyHandler : MessageHandler<SomethingOccured>

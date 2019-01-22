@@ -14,7 +14,8 @@ namespace Itas.Infrastructure.Messaging.RabbitConsumer
             this.ctx = ctx;
         }
 
-        public event Action<object, Type, object> OnMessage;
+        public event Action<object, Type, Action<IServiceProvider>> OnMessage;
+
 
         private Dictionary<string, Type> handlerBindings = new Dictionary<string, Type>();
 
@@ -33,7 +34,7 @@ namespace Itas.Infrastructure.Messaging.RabbitConsumer
             {
                 if (handlerBindings.ContainsKey(o.GetType().FullName))
                 {
-                    OnMessage(o, handlerBindings[o.GetType().FullName], ctx);
+                    OnMessage(o, handlerBindings[o.GetType().FullName],(sp)=> { } );
                 }
                 //We are missing support for wildcards.. 
             }

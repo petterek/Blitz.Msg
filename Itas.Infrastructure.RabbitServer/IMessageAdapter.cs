@@ -8,12 +8,15 @@ namespace Itas.Infrastructure.Consumer
     /// </summary>
     public interface IMessageAdapter : IDisposable
     {
+
+        
+
         /// <summary>
         /// First argument should be the message,second is the handlertype for this message, and the third is the context. 
         /// The context is injected into the Container when the handler is created.
         /// 
         /// </summary>
-        event Action<object,Type, object> OnMessage;
+        event Action<object,Type, Action<IServiceProvider>> OnMessage;
 
         /// <summary>
         /// 

@@ -9,12 +9,12 @@
             
             </summary>
         </member>
-        <member name="M:Itas.Infrastructure.Consumer.MessageHandlerEngine.#ctor(Itas.Infrastructure.Consumer.IMessageAdapter,System.Func{System.Type,System.Object,System.Object})">
+        <member name="M:Itas.Infrastructure.Consumer.MessageHandlerEngine.#ctor(Itas.Infrastructure.Consumer.IMessageAdapter,System.Func{System.IServiceProvider})">
             <summary>
             
             </summary>
-            <param name="handlerCreator"></param>
             <param name="producer"></param>
+            <param name="createScope"></param>
         </member>
         <member name="M:Itas.Infrastructure.Consumer.MessageHandlerEngine.AttachMessageHandler``2">
             <summary>

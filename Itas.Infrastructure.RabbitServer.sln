@@ -21,9 +21,9 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Itas.Infrastructure.Messagi
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Demo", "Demo", "{D8007084-A351-410D-8287-35C68E31FAEE}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Producer.Demo", "Producer.Demo\Producer.Demo.csproj", "{0FCEF53E-C262-446C-8E7A-81A57C10822A}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Producer.Demo", "Producer.Demo\Producer.Demo.csproj", "{0FCEF53E-C262-446C-8E7A-81A57C10822A}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Demo.Events", "Demo.Events\Demo.Events.csproj", "{21F99BBA-A8F5-4761-977A-512929024445}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Demo.Events", "Demo.Events\Demo.Events.csproj", "{21F99BBA-A8F5-4761-977A-512929024445}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

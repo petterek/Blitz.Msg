@@ -23,7 +23,7 @@ namespace Producer.Demo
 
             var pub = new PublishEventToRabbit(con, new Serializer());
 
-            container.Register<PublishEventToRabbit>(() => pub).AsSingleton(); //This is singleton to hold the connection stuff for rabbit. Must be disposed
+            container.Register<PublishEventToRabbit>(() => pub).Singleton(); //This is singleton to hold the connection stuff for rabbit. Must be disposed
             container.Register<CustomPublisher>().Transient(); //This is the wrapper to capture the context of the current call
             container.Register<ApplicationContext>(); // this is the actual context.. Very simplefied :) 
 

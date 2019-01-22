@@ -10,7 +10,7 @@ namespace Itas.Infrastructure.Consumer
     public class MessageHandlerEngine : IDisposable
     {
 
-        private readonly Func<Type, object, object> handlerCreator;
+        private readonly Func<Type, object, object, object> handlerCreator;
         private readonly IMessageAdapter producer;
         private Dictionary<Type, Type> HandlerTypes = new Dictionary<Type, Type>();
 
@@ -25,28 +25,29 @@ namespace Itas.Infrastructure.Consumer
             return HandlerTypes[messageType];
         }
 
+        readonly Func<IServiceProvider> createScope;
+               
         /// <summary>
         /// 
         /// </summary>
-        /// <param name="handlerCreator"></param>
         /// <param name="producer"></param>
+        /// <param name="createScope"></param>
 
-        public MessageHandlerEngine(IMessageAdapter producer,Func<Type, object, object> handlerCreator )
+        public MessageHandlerEngine(IMessageAdapter producer, Func<IServiceProvider> createScope)
         {
-
-            this.handlerCreator = handlerCreator;
+            this.createScope = createScope;
             this.producer = producer;
 
 
             producer.OnMessage += HandleTypedMessages;
         }
-        
+
         /// <summary>
         /// 
         /// </summary>
         /// <typeparam name="TMessage"></typeparam>
         /// <typeparam name="TMessageHandler"></typeparam>
-        public void AttachMessageHandler<TMessage,TMessageHandler>() where TMessageHandler : MessageHandler<TMessage>
+        public void AttachMessageHandler<TMessage, TMessageHandler>() where TMessageHandler : MessageHandler<TMessage>
         {
             Type messageHandlerType = typeof(TMessageHandler);
             var messageType = typeof(TMessage);
@@ -70,12 +71,29 @@ namespace Itas.Infrastructure.Consumer
         /// <param name="message">The message revieved</param>
         /// <param name="handler">The handler to handle this</param>
         /// <param name="context">The object holding the context for this call</param>
-        public void HandleTypedMessages(object message,Type handler, object context)
+        public void HandleTypedMessages(object message, Type handler, object context)
         {
-            var instance = (IMessageHandler)handlerCreator(handler, context);
-            instance.Handle(message);
+
+
+
+            var s = createScope();
+            try
+            {
+                var instance = ((Func<object, IMessageHandler>)s.GetService(typeof(Func<Type, object, IMessageHandler>)))(context) ;
+                instance.Handle(message);
+            }
+            finally
+            {
+                if (s is IDisposable)
+                {
+                    ((IDisposable)s).Dispose();
+                }
+            }
+
+
+
         }
-        
+
         /// <summary>
         /// 
         /// </summary>

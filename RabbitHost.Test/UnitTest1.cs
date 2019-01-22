@@ -50,7 +50,7 @@ namespace RabbitHost.Test
         public void SetupLooksGood()
         {
             var container = new SimpleFactory.Container();
-            container.Register<MyHandler>().AsSingleton();
+            container.Register<MyHandler>().Singleton();
 
             container.Register<MyGenericEventHandler>();
 
@@ -58,7 +58,9 @@ namespace RabbitHost.Test
 
             adapter = new FakeAdapter(new List<object> { new SomethingHasHappend() }, new ClientContext { });
 
-            var Server = new MessageHandlerEngine(adapter, (theType, ctx) => container.CreateAnonymousInstance(theType, ctx));
+            var Server = new MessageHandlerEngine(adapter,
+                () => new SimpleFactory.SimplefactoryProvider(container) 
+                );
 
             Server.AttachMessageHandler<SomethingHasHappend, MyHandler>();
             Server.AttachGenericMessageHandler<MyGenericEventHandler>("#");
