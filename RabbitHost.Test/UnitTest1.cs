@@ -72,8 +72,8 @@ namespace RabbitHost.Test
 
             adapter.StopAdapter();
 
-            Assert.IsNotNull(((MyHandler)container.CreateInstance<MessageHandler<SomethingHasHappend>>()).input);
-            Assert.AreEqual(1, ((MyHandler)container.CreateInstance<MessageHandler<SomethingHasHappend>>()).Counter);
+            Assert.IsNotNull(container.CreateInstance<MyHandler>().input);
+            Assert.AreEqual(1, container.CreateInstance<MyHandler>().Counter);
         }
 
     }
