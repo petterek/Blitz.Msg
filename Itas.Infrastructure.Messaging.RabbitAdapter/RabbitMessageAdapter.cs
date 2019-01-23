@@ -5,6 +5,7 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using Itas.Infrastructure.MessageHost;
+using Itas.Infrastructure.Messaging.Shared;
 
 namespace Itas.Infrastructure.Messaging.RabbitConsumer
 {

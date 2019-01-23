@@ -3,7 +3,7 @@
   <PropertyGroup>
     <TargetFramework>netstandard2.0</TargetFramework>
     <LangVersion>7.3</LangVersion>
-    <Version>1.0.5</Version>
+    <Version>1.0.6</Version>
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
   </PropertyGroup>
 
@@ -14,6 +14,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\Itas.Infrastructure.Messaging.Shared\Itas.Infrastructure.Messaging.Shared.csproj" />
     <ProjectReference Include="..\Itas.Infrastructure.RabbitServer\Itas.Infrastructure.Consumer.csproj" />
   </ItemGroup>
 

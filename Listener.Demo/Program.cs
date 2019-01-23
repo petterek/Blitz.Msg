@@ -5,6 +5,7 @@ using System;
 using System.IO;
 using System.Threading.Tasks;
 using Itas.Infrastructure.MessageHost;
+using Itas.Infrastructure.Messaging.Shared;
 
 namespace Listener.Demo
 {

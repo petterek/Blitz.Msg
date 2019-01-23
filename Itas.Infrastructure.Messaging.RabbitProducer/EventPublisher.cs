@@ -2,6 +2,7 @@
 using RabbitMQ.Client;
 using System;
 using System.Collections.Generic;
+using Itas.Infrastructure.Messaging.Shared;
 
 namespace Itas.Infrastructure.Messaging.RabbitProducer
 {
@@ -33,8 +34,8 @@ namespace Itas.Infrastructure.Messaging.RabbitProducer
 	            Password = connectionInfo.Password,
 	            HostName = connectionInfo.Server,
 	            AutomaticRecoveryEnabled = true,
-	            VirtualHost = connectionInfo.VirtualHost
-            };
+	            VirtualHost = connectionInfo.VirtualHost ?? "/"
+			};
 
 
             _rabbitConnection = factory.CreateConnection(connectionInfo.ClientName);
