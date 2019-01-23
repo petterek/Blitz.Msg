@@ -1,10 +1,10 @@
 ﻿using Demo.Events;
-using Itas.Infrastructure.Consumer;
 using Itas.Infrastructure.Context;
 using Itas.Infrastructure.Messaging.RabbitConsumer;
 using System;
 using System.IO;
 using System.Threading.Tasks;
+using Itas.Infrastructure.MessageHost;
 
 namespace Listener.Demo
 {

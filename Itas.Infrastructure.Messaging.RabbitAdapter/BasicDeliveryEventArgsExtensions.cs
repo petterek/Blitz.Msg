@@ -34,7 +34,16 @@ namespace Itas.Infrastructure.Messaging.RabbitConsumer
             return ret;
         }
 
-
+        public static ClientContext GetClientContext(this BasicDeliverEventArgs e)
+        {
+	        return new ClientContext
+	        {
+		        CorrelationId = e.GetCorrelationId(),
+		        CompanyGuid = e.GetCustomerGuid(),
+		        UserGuid = e.GetUserGuid(),
+		        CultureCode = e.GetCultureCode()
+	        };
+        }
 
         private static Guid GetGuidValueFromDictionary(this BasicDeliverEventArgs e, string headerName)
         {

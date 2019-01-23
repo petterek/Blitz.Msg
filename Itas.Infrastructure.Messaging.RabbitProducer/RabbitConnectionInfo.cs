@@ -12,5 +12,4 @@
         public string ExchangeName;
         public string ClientName;
     }
-
 }
