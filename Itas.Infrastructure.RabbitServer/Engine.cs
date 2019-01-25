@@ -9,12 +9,10 @@ namespace Itas.Infrastructure.Consumer
     /// </summary>
     public class MessageHandlerEngine : IDisposable
     {
-
-        private readonly Func<Type, object, object, object> handlerCreator;
+                
         private readonly IMessageAdapter producer;
         private Dictionary<Type, Type> HandlerTypes = new Dictionary<Type, Type>();
-
-
+        
 
         Type GetHandlerType(Type messageType)
         {
@@ -32,13 +30,11 @@ namespace Itas.Infrastructure.Consumer
         /// </summary>
         /// <param name="producer"></param>
         /// <param name="createScope"></param>
-
         public MessageHandlerEngine(IMessageAdapter producer, Func<IServiceProvider> createScope)
         {
             this.createScope = createScope;
             this.producer = producer;
-
-
+            
             producer.OnMessage += HandleTypedMessages;
         }
 
@@ -112,6 +108,10 @@ namespace Itas.Infrastructure.Consumer
         #region IDisposable Support
         private bool disposedValue = false; // To detect redundant calls
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="disposing"></param>
         protected virtual void Dispose(bool disposing)
         {
             if (!disposedValue)

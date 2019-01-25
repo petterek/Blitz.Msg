@@ -14,13 +14,13 @@ namespace Itas.Infrastructure.Messaging.RabbitConsumer
         private List<IModel> channels = new List<IModel>();
         private RabbitConnectionInfo connectionInfo;
         private readonly Context.ISerializer serializer;
-        private readonly Action<IServiceProvider,BasicDeliverEventArgs, object> contextCreator;
+        private readonly Action<IServiceProvider,BasicDeliverEventArgs, object> preHandleAction;
         private List<BindingInfo> bindingInfos = new List<BindingInfo>();
         private ServerManagement.ExchangeInfo GlobaleErrorExchange;
 
         public event Action<object,Type, Action<IServiceProvider>> OnMessage;
 
-        public RabbitMessageAdapter(RabbitConnectionInfo connectionInfo, ISerializer serializer, Action<IServiceProvider, BasicDeliverEventArgs, object> contextCreator)
+        public RabbitMessageAdapter(RabbitConnectionInfo connectionInfo, ISerializer serializer, Action<IServiceProvider, BasicDeliverEventArgs, object> preHandleAction)
         {
 
             this.connectionFactory = new ConnectionFactory()
@@ -34,7 +34,7 @@ namespace Itas.Infrastructure.Messaging.RabbitConsumer
 
             this.connectionInfo = connectionInfo;
             this.serializer = serializer;
-            this.contextCreator = contextCreator;
+            this.preHandleAction = preHandleAction;
         }
 
         public void StartAdapter()
@@ -65,7 +65,7 @@ namespace Itas.Infrastructure.Messaging.RabbitConsumer
                         var param = serializer.FromStream(new System.IO.MemoryStream(theMessageRecieved.Body), bindingInfo.MessageType);
                         try
                         {
-                            OnMessage(param,bindingInfo.HandlerType,(sp)=> contextCreator(sp,theMessageRecieved,param));
+                            OnMessage(param,bindingInfo.HandlerType,(sp)=> preHandleAction(sp,theMessageRecieved,param));
                             model.BasicAck(theMessageRecieved.DeliveryTag, false);
                         }
                         catch (Exception ex)
@@ -82,7 +82,7 @@ namespace Itas.Infrastructure.Messaging.RabbitConsumer
                         var param = new RecievedMessageData(theMessageRecieved.Body, theMessageRecieved.BasicProperties.Headers);
                         try
                         {
-                            OnMessage(param,bindingInfo.HandlerType,(sp)=>contextCreator(sp,theMessageRecieved, param));
+                            OnMessage(param,bindingInfo.HandlerType,(sp)=>preHandleAction(sp,theMessageRecieved, param));
                             model.BasicAck(theMessageRecieved.DeliveryTag, false);
                         }
                         catch (Exception ex)
