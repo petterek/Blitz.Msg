@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio 15
-VisualStudioVersion = 15.0.26124.0
+# Visual Studio Version 16
+VisualStudioVersion = 16.0.28407.52
 MinimumVisualStudioVersion = 15.0.26124.0
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Itas.Infrastructure.Consumer", "Itas.Infrastructure.RabbitServer\Itas.Infrastructure.Consumer.csproj", "{9374FD2C-E519-42C8-86BD-0F40F8F30F03}"
 EndProject
@@ -24,6 +24,8 @@ EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Producer.Demo", "Producer.Demo\Producer.Demo.csproj", "{0FCEF53E-C262-446C-8E7A-81A57C10822A}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Demo.Events", "Demo.Events\Demo.Events.csproj", "{21F99BBA-A8F5-4761-977A-512929024445}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Itas.Infrastructure.Messaging.Shared", "Itas.Infrastructure.Messaging.Shared\Itas.Infrastructure.Messaging.Shared.csproj", "{F1372B0A-AF46-440D-AADA-8A37244B8BDD}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -59,6 +61,10 @@ Global
 		{21F99BBA-A8F5-4761-977A-512929024445}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{21F99BBA-A8F5-4761-977A-512929024445}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{21F99BBA-A8F5-4761-977A-512929024445}.Release|Any CPU.Build.0 = Release|Any CPU
+		{F1372B0A-AF46-440D-AADA-8A37244B8BDD}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{F1372B0A-AF46-440D-AADA-8A37244B8BDD}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{F1372B0A-AF46-440D-AADA-8A37244B8BDD}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{F1372B0A-AF46-440D-AADA-8A37244B8BDD}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

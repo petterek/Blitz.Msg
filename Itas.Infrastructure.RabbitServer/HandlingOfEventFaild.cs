@@ -1,4 +1,4 @@
-namespace Itas.Infrastructure.Consumer
+namespace Itas.Infrastructure.MessageHost
 {
     public class HandlingOfEventFaild
     {

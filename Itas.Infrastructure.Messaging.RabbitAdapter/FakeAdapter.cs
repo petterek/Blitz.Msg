@@ -1,7 +1,7 @@
-using Itas.Infrastructure.Consumer;
 using Itas.Infrastructure.Context;
 using System;
 using System.Collections.Generic;
+using Itas.Infrastructure.MessageHost;
 
 namespace Itas.Infrastructure.Messaging.RabbitConsumer
 {

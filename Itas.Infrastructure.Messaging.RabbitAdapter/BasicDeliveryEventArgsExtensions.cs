@@ -27,16 +27,25 @@ namespace Itas.Infrastructure.Messaging.RabbitConsumer
             return GetGuidValue(e.BasicProperties.CorrelationId);
         }
 
-        private static Guid GetGuidValue(string value)
+        public static ClientContext GetClientContext(this BasicDeliverEventArgs e)
         {
-            Guid.TryParse(value,out var ret);
-            
-            return ret;
+	        return new ClientContext
+	        {
+		        CorrelationId = e.GetCorrelationId(),
+		        CompanyGuid = e.GetCustomerGuid(),
+		        UserGuid = e.GetUserGuid(),
+		        CultureCode = e.GetCultureCode()
+	        };
         }
 
+        private static Guid GetGuidValue(string value)
+        {
+	        Guid.TryParse(value, out var ret);
 
+	        return ret;
+        }
 
-        private static Guid GetGuidValueFromDictionary(this BasicDeliverEventArgs e, string headerName)
+		private static Guid GetGuidValueFromDictionary(this BasicDeliverEventArgs e, string headerName)
         {
             return e.BasicProperties.Headers.ContainsKey(headerName)
                 ? Guid.Parse(Encoding.UTF8.GetString((byte[])e.BasicProperties.Headers[headerName]))
