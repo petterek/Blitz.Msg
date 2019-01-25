@@ -1,8 +1,8 @@
 namespace Itas.Infrastructure.MessageHost
 {
-    public class HandlingOfEventFaild
+    public class HandlingOfEventFailed
     {
-        public HandlingOfEventFaild(string innnerMessage, string eventType, string exceptionType, string exceptionMsg)
+        public HandlingOfEventFailed(string innnerMessage, string eventType, string exceptionType, string exceptionMsg)
         {
             InnnerMessage = innnerMessage;
             EventType = eventType;
