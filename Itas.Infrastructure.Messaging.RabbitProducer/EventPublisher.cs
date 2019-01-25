@@ -56,9 +56,6 @@ namespace Itas.Infrastructure.Messaging.RabbitProducer
             if (context.CustomerId == Guid.Empty)
 	            throw new ArgumentException("Missing CustomerId");
 
-            if (context.UserId == Guid.Empty)
-	            throw new ArgumentException("Missing UserId");
-
             var props = _channel.CreateBasicProperties();
             props.Headers = new Dictionary<string, object>();
 
