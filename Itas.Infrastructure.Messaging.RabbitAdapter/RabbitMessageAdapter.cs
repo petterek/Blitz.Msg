@@ -1,9 +1,10 @@
-using Itas.Infrastructure.Consumer;
+using Itas.Infrastructure.MessageHost;
 using Itas.Infrastructure.Context;
 using RabbitMQ.Client;
 using RabbitMQ.Client.Events;
 using System;
 using System.Collections.Generic;
+using Itas.Infrastructure.Messaging.Shared;
 
 namespace Itas.Infrastructure.Messaging.RabbitConsumer
 {
@@ -13,7 +14,7 @@ namespace Itas.Infrastructure.Messaging.RabbitConsumer
         private ServerManagement management;
         private List<IModel> channels = new List<IModel>();
         private RabbitConnectionInfo connectionInfo;
-        private readonly Context.ISerializer serializer;
+        private readonly ISerializer serializer;
         private readonly Action<IServiceProvider,BasicDeliverEventArgs, object> preHandleAction;
         private List<BindingInfo> bindingInfos = new List<BindingInfo>();
         private ServerManagement.ExchangeInfo GlobaleErrorExchange;

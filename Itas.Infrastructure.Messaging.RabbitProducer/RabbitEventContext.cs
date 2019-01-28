@@ -10,7 +10,5 @@ namespace Itas.Infrastructure.Messaging.RabbitProducer
         public Guid CorrelationId;
         public Guid CustomerId;
         public Guid UserId;
-
     }
-
 }

@@ -3,6 +3,7 @@ using Itas.Infrastructure.Messaging.RabbitProducer;
 using System;
 using System.IO;
 using System.Threading.Tasks;
+using Itas.Infrastructure.Messaging.Shared;
 
 namespace Producer.Demo
 {
