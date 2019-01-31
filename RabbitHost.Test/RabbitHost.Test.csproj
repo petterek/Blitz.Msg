@@ -7,8 +7,8 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="Itas.Infrastructure.Context" Version="4.1.0" />
     <PackageReference Include="Microsoft.NET.Test.Sdk" Version="15.9.0" />
+    <PackageReference Include="miniJson" Version="1.4.0" />
     <PackageReference Include="NUnit" Version="3.11.0" />
     <PackageReference Include="NUnit3TestAdapter" Version="3.12.0" />
     <PackageReference Include="SimpleFactory" Version="3.0.0" />
@@ -16,7 +16,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\Itas.Infrastructure.Messaging.RabbitAdapter\Itas.Infrastructure.Messaging.RabbitConsumer.csproj" />
-    <ProjectReference Include="..\Itas.Infrastructure.RabbitServer\Itas.Infrastructure.Consumer.csproj" />
+    <ProjectReference Include="..\Itas.Infrastructure.RabbitServer\Itas.Infrastructure.MessageHost.csproj" />
   </ItemGroup>
 
 </Project>

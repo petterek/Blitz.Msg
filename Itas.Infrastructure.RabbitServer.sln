@@ -1,9 +1,9 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio Version 16
-VisualStudioVersion = 16.0.28407.52
+# Visual Studio 15
+VisualStudioVersion = 15.0.28307.329
 MinimumVisualStudioVersion = 15.0.26124.0
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Itas.Infrastructure.Consumer", "Itas.Infrastructure.RabbitServer\Itas.Infrastructure.Consumer.csproj", "{9374FD2C-E519-42C8-86BD-0F40F8F30F03}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Itas.Infrastructure.MessageHost", "Itas.Infrastructure.RabbitServer\Itas.Infrastructure.MessageHost.csproj", "{9374FD2C-E519-42C8-86BD-0F40F8F30F03}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "RabbitHost.Test", "RabbitHost.Test\RabbitHost.Test.csproj", "{D275A1EF-73C1-44A8-8A13-7337E105EA81}"
 EndProject
@@ -25,7 +25,15 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Producer.Demo", "Producer.D
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Demo.Events", "Demo.Events\Demo.Events.csproj", "{21F99BBA-A8F5-4761-977A-512929024445}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Itas.Infrastructure.Messaging.Shared", "Itas.Infrastructure.Messaging.Shared\Itas.Infrastructure.Messaging.Shared.csproj", "{F1372B0A-AF46-440D-AADA-8A37244B8BDD}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Itas.Infrastructure.Messaging.Shared", "Itas.Infrastructure.Messaging.Shared\Itas.Infrastructure.Messaging.Shared.csproj", "{F1372B0A-AF46-440D-AADA-8A37244B8BDD}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Itas.Infrastructure.Messaging.AspnetcoreExtension", "Itas.Infrastructure.Messaging.AspnetcoreExtension\Itas.Infrastructure.Messaging.AspnetcoreExtension.csproj", "{96E0790F-24E5-4855-84D2-FBD52938FBCB}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Test", "Test", "{DBEB9903-1156-4C7C-9AB6-AB4905F9D48C}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ExtensionTests", "ExtensionTests\ExtensionTests.csproj", "{5803622B-9947-4B9D-95E7-EF2A8EAD0FD8}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Listner.Aspnet.Demo", "Listner.Aspnet.Demo\Listner.Aspnet.Demo.csproj", "{34B455FB-D816-4DB6-956D-2221148D148F}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -65,14 +73,29 @@ Global
 		{F1372B0A-AF46-440D-AADA-8A37244B8BDD}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{F1372B0A-AF46-440D-AADA-8A37244B8BDD}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{F1372B0A-AF46-440D-AADA-8A37244B8BDD}.Release|Any CPU.Build.0 = Release|Any CPU
+		{96E0790F-24E5-4855-84D2-FBD52938FBCB}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{96E0790F-24E5-4855-84D2-FBD52938FBCB}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{96E0790F-24E5-4855-84D2-FBD52938FBCB}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{96E0790F-24E5-4855-84D2-FBD52938FBCB}.Release|Any CPU.Build.0 = Release|Any CPU
+		{5803622B-9947-4B9D-95E7-EF2A8EAD0FD8}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{5803622B-9947-4B9D-95E7-EF2A8EAD0FD8}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{5803622B-9947-4B9D-95E7-EF2A8EAD0FD8}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{5803622B-9947-4B9D-95E7-EF2A8EAD0FD8}.Release|Any CPU.Build.0 = Release|Any CPU
+		{34B455FB-D816-4DB6-956D-2221148D148F}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{34B455FB-D816-4DB6-956D-2221148D148F}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{34B455FB-D816-4DB6-956D-2221148D148F}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{34B455FB-D816-4DB6-956D-2221148D148F}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
 	EndGlobalSection
 	GlobalSection(NestedProjects) = preSolution
+		{D275A1EF-73C1-44A8-8A13-7337E105EA81} = {DBEB9903-1156-4C7C-9AB6-AB4905F9D48C}
 		{A9A0976F-D610-4B35-8242-0304F115EF71} = {D8007084-A351-410D-8287-35C68E31FAEE}
 		{0FCEF53E-C262-446C-8E7A-81A57C10822A} = {D8007084-A351-410D-8287-35C68E31FAEE}
 		{21F99BBA-A8F5-4761-977A-512929024445} = {D8007084-A351-410D-8287-35C68E31FAEE}
+		{5803622B-9947-4B9D-95E7-EF2A8EAD0FD8} = {DBEB9903-1156-4C7C-9AB6-AB4905F9D48C}
+		{34B455FB-D816-4DB6-956D-2221148D148F} = {D8007084-A351-410D-8287-35C68E31FAEE}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {D66934E5-3222-4D08-9757-33D17AA37AAC}

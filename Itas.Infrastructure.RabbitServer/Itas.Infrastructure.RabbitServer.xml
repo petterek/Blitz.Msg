@@ -9,12 +9,13 @@
             
             </summary>
         </member>
-        <member name="M:Itas.Infrastructure.MessageHost.MessageHandlerEngine.#ctor(Itas.Infrastructure.MessageHost.IMessageAdapter,System.Func{System.IServiceProvider})">
+        <member name="M:Itas.Infrastructure.MessageHost.MessageHandlerEngine.#ctor(Itas.Infrastructure.MessageHost.IMessageAdapter,System.IServiceProvider,Microsoft.Extensions.Logging.ILogger{Itas.Infrastructure.MessageHost.MessageHandlerEngine})">
             <summary>
             
             </summary>
             <param name="producer"></param>
-            <param name="createScope"></param>
+            <param name="serviceProvider"></param>
+            <param name="logger"></param>
         </member>
         <member name="M:Itas.Infrastructure.MessageHost.MessageHandlerEngine.AttachMessageHandler``2">
             <summary>
@@ -23,6 +24,13 @@
             <typeparam name="TMessage"></typeparam>
             <typeparam name="TMessageHandler"></typeparam>
         </member>
+        <member name="M:Itas.Infrastructure.MessageHost.MessageHandlerEngine.AttachMessageHandler(System.Type,System.Type)">
+            <summary>
+            
+            </summary>
+            <param name="message"></param>
+            <param name="messageHandler"></param>
+        </member>
         <member name="M:Itas.Infrastructure.MessageHost.MessageHandlerEngine.AttachGenericMessageHandler``1(System.String)">
             <summary>
             
@@ -30,12 +38,12 @@
             <typeparam name="TMessageHandler"></typeparam>
             <param name="messageName"></param>
         </member>
-        <member name="M:Itas.Infrastructure.MessageHost.MessageHandlerEngine.HandleTypedMessages(System.Object,System.Type,System.Action{System.IServiceProvider})">
+        <member name="M:Itas.Infrastructure.MessageHost.MessageHandlerEngine.HandleTypedMessages(System.Object,System.Type,Itas.Infrastructure.MessageHost.RecievedMessageData)">
             <summary>
             
             </summary>
             <param name="message">The message revieved</param>
-            <param name="handler">The handler to handle this</param>
+            <param name="handlerType">The handler to handle this</param>
             <param name="preHandle"></param>
         </member>
         <member name="M:Itas.Infrastructure.MessageHost.MessageHandlerEngine.StartServer">
@@ -118,17 +126,41 @@
             <param name="messageType"></param>
             <param name="handler"></param>
         </member>
+        <member name="T:Itas.Infrastructure.MessageHost.IRecivedMessageContext">
+            <summary>
+            
+            </summary>
+        </member>
+        <member name="P:Itas.Infrastructure.MessageHost.IRecivedMessageContext.RecivedMessageData">
+            <summary>
+            
+            </summary>
+        </member>
+        <member name="T:Itas.Infrastructure.MessageHost.MessageContextHolder">
+            <summary>
+            
+            </summary>
+        </member>
+        <member name="P:Itas.Infrastructure.MessageHost.MessageContextHolder.RecivedMessageData">
+            <summary>
+            
+            </summary>
+        </member>
         <member name="T:Itas.Infrastructure.MessageHost.RecievedMessageData">
             <summary>
             
             </summary>
         </member>
-        <member name="M:Itas.Infrastructure.MessageHost.RecievedMessageData.#ctor(System.Byte[],System.Collections.Generic.IDictionary{System.String,System.Object})">
+        <member name="M:Itas.Infrastructure.MessageHost.RecievedMessageData.#ctor">
+            <summary>
+            
+            </summary>
+        </member>
+        <member name="M:Itas.Infrastructure.MessageHost.RecievedMessageData.#ctor(System.Byte[])">
             <summary>
             
             </summary>
             <param name="payload"></param>
-            <param name="attributes"></param>
         </member>
         <member name="P:Itas.Infrastructure.MessageHost.RecievedMessageData.Payload">
             <summary>

@@ -1,42 +1,31 @@
-﻿using Itas.Infrastructure.Context;
 using RabbitMQ.Client.Events;
 using System;
 using System.Text;
 
-namespace Itas.Infrastructure.Messaging.RabbitConsumer
+namespace Itas.Infrastructure.Messaging.AspnetcoreExtension
 {
     public static class BasicDeliveryEventArgsExtensions
     {
         public static string GetCultureCode(this BasicDeliverEventArgs e)
         {
-            return GetStringValueFromDictionary(e, HeaderNames.Culture);
+            return GetStringValueFromDictionary(e, "Culture");// HeaderNames.Culture);
         }
 
         public static Guid GetUserGuid(this BasicDeliverEventArgs e)
         {
-            return GetGuidValueFromDictionary(e, HeaderNames.User);
+            return GetGuidValueFromDictionary(e, "User");// HeaderNames.User);
         }
 
         public static Guid GetCustomerGuid(this BasicDeliverEventArgs e)
         {
-            return GetGuidValueFromDictionary(e, HeaderNames.Company);
+            return GetGuidValueFromDictionary(e, "Company"); //HeaderNames.Company);
         }
 
         public static Guid GetCorrelationId(this BasicDeliverEventArgs e)
         {
             return GetGuidValue(e.BasicProperties.CorrelationId);
         }
-
-        public static ClientContext GetClientContext(this BasicDeliverEventArgs e)
-        {
-	        return new ClientContext
-	        {
-		        CorrelationId = e.GetCorrelationId(),
-		        CompanyGuid = e.GetCustomerGuid(),
-		        UserGuid = e.GetUserGuid(),
-		        CultureCode = e.GetCultureCode()
-	        };
-        }
+                
 
         private static Guid GetGuidValue(string value)
         {

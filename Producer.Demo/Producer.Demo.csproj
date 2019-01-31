@@ -6,7 +6,7 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="miniJson" Version="1.3.0" />
+    <PackageReference Include="miniJson" Version="1.4.0" />
     <PackageReference Include="SimpleFactory" Version="3.0.0" />
   </ItemGroup>
 

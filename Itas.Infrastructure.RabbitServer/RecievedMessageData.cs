@@ -7,25 +7,32 @@ namespace Itas.Infrastructure.MessageHost
   /// </summary>
   public class RecievedMessageData
     {
+
         /// <summary>
         /// 
         /// </summary>
-        /// <param name="payload"></param>
-        /// <param name="attributes"></param>
-        public RecievedMessageData( byte[] payload, IDictionary<string, object> attributes)
+        public RecievedMessageData()
         {
-            Payload = payload;
-            Attributes = attributes;
+
         }
 
         /// <summary>
         /// 
         /// </summary>
-        public byte[] Payload { get; }
-        
+        /// <param name="payload"></param>
+        public RecievedMessageData( byte[] payload)
+        {
+            Payload = payload;
+        }
+
         /// <summary>
         /// 
         /// </summary>
-        public IDictionary<string, object> Attributes { get; }
+        public byte[] Payload { get; set; }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        public Dictionary<string, string> Attributes { get; set; } = new Dictionary<string, string>();
     }
 }

@@ -1,5 +1,4 @@
 using System;
-using System.ComponentModel;
 
 namespace Itas.Infrastructure.MessageHost
 {
@@ -16,7 +15,7 @@ namespace Itas.Infrastructure.MessageHost
         /// The context is injected into the Container when the handler is created.
         /// 
         /// </summary>
-        event Action<object,Type, Action<IServiceProvider>> OnMessage;
+        event Action<object,Type, RecievedMessageData> OnMessage;
 
         /// <summary>
         /// 
@@ -37,19 +36,4 @@ namespace Itas.Infrastructure.MessageHost
         void Bind(string routingKey,Type messageType, Type handler);
     }
 
-
-    public class Example
-    {
-        private readonly IContainer container;
-
-        public Example(IContainer container)
-        {
-            this.container = container;
-        }
-
-        public void DoSomething()
-        {
-            
-        }
-    }
 }

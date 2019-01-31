@@ -1,4 +1,3 @@
-using Itas.Infrastructure.Context;
 using System;
 using System.Collections.Generic;
 using Itas.Infrastructure.MessageHost;
@@ -13,7 +12,8 @@ namespace Itas.Infrastructure.Messaging.RabbitConsumer
             this.messages = messages;
         }
 
-        public event Action<object, Type, Action<IServiceProvider>> OnMessage;
+ 
+        public event Action<object, Type, RecievedMessageData> OnMessage;
 
 
         private Dictionary<string, Type> handlerBindings = new Dictionary<string, Type>();
@@ -33,7 +33,7 @@ namespace Itas.Infrastructure.Messaging.RabbitConsumer
             {
                 if (handlerBindings.ContainsKey(o.GetType().FullName))
                 {
-                    OnMessage(o, handlerBindings[o.GetType().FullName],(sp)=> { } );
+                    OnMessage(o, handlerBindings[o.GetType().FullName],new RecievedMessageData(new byte[0])  );
                 }
                 //We are missing support for wildcards.. 
             }
@@ -47,7 +47,7 @@ namespace Itas.Infrastructure.Messaging.RabbitConsumer
         #region IDisposable Support
         private bool disposedValue = false; // To detect redundant calls
         private readonly List<object> messages;
-        private readonly ClientContext ctx;
+        //private readonly ClientContext ctx;
 
         protected virtual void Dispose(bool disposing)
         {

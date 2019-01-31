@@ -1,11 +1,10 @@
-using Itas.Infrastructure.Context;
+using Itas.Infrastructure.MessageHost;
 using Itas.Infrastructure.Messaging.RabbitConsumer;
 using NUnit.Framework;
 using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Threading.Tasks;
-using Itas.Infrastructure.MessageHost;
 
 namespace RabbitHost.Test
 {
@@ -59,7 +58,8 @@ namespace RabbitHost.Test
             adapter = new FakeAdapter(new List<object> { new SomethingHasHappend() });
 
             var Server = new MessageHandlerEngine(adapter,
-                () => new SimpleFactory.SimplefactoryProvider(container) 
+                null,
+                null
                 );
 
             Server.AttachMessageHandler<SomethingHasHappend, MyHandler>();
@@ -91,16 +91,18 @@ namespace RabbitHost.Test
         {
 
         }
+
+        
     }
 
 
     public class MyHandler : MessageHandler<SomethingHasHappend>
     {
-        
+
         public SomethingHasHappend input;
         public int Counter = 0;
 
-        
+
 
         public override void Handle(SomethingHasHappend param)
         {
