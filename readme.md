@@ -1,4 +1,4 @@
-﻿
+
 # What does this do?
 
 It creates the infrastructure for reciving messages from RabbitMq. 
