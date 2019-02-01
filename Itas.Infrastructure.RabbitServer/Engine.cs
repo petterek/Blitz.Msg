@@ -1,8 +1,9 @@
-
+using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Logging;
 using System;
 using System.Collections.Generic;
 
-namespace Itas.Infrastructure.Consumer
+namespace Itas.Infrastructure.MessageHost
 {
     /// <summary>
     /// 
@@ -10,10 +11,8 @@ namespace Itas.Infrastructure.Consumer
     public class MessageHandlerEngine : IDisposable
     {
 
-        private readonly Func<Type, object, object> handlerCreator;
         private readonly IMessageAdapter producer;
         private Dictionary<Type, Type> HandlerTypes = new Dictionary<Type, Type>();
-
 
 
         Type GetHandlerType(Type messageType)
@@ -24,35 +23,44 @@ namespace Itas.Infrastructure.Consumer
             }
             return HandlerTypes[messageType];
         }
+                
+        readonly ILogger<MessageHandlerEngine> logger;
+        readonly IServiceProvider serviceProvider;
 
         /// <summary>
         /// 
         /// </summary>
-        /// <param name="handlerCreator"></param>
         /// <param name="producer"></param>
-
-        public MessageHandlerEngine(IMessageAdapter producer,Func<Type, object, object> handlerCreator )
+        /// <param name="serviceProvider"></param>
+        /// <param name="logger"></param>
+        public MessageHandlerEngine(IMessageAdapter producer,IServiceProvider serviceProvider, ILogger<MessageHandlerEngine> logger)
         {
-
-            this.handlerCreator = handlerCreator;
+            this.serviceProvider = serviceProvider;
+            this.logger = logger;
             this.producer = producer;
-
 
             producer.OnMessage += HandleTypedMessages;
         }
-        
+
         /// <summary>
         /// 
         /// </summary>
         /// <typeparam name="TMessage"></typeparam>
         /// <typeparam name="TMessageHandler"></typeparam>
-        public void AttachMessageHandler<TMessage,TMessageHandler>() where TMessageHandler : MessageHandler<TMessage>
+        public void AttachMessageHandler<TMessage, TMessageHandler>() where TMessageHandler : MessageHandler<TMessage>
         {
-            Type messageHandlerType = typeof(TMessageHandler);
-            var messageType = typeof(TMessage);
-            producer.Bind(messageType.FullName, messageType, messageHandlerType);
+            AttachMessageHandler(typeof(TMessage), typeof(TMessageHandler));
         }
-
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="message"></param>
+        /// <param name="messageHandler"></param>
+        public void AttachMessageHandler(Type message, Type messageHandler)
+        {
+            producer.Bind(message.FullName, message, messageHandler);
+        }
+        
         /// <summary>
         /// 
         /// </summary>
@@ -62,20 +70,44 @@ namespace Itas.Infrastructure.Consumer
         {
             producer.Bind(messageName, null, typeof(TMessageHandler));
         }
-
-
+        
         /// <summary>
         /// 
         /// </summary>
         /// <param name="message">The message revieved</param>
-        /// <param name="handler">The handler to handle this</param>
-        /// <param name="context">The object holding the context for this call</param>
-        public void HandleTypedMessages(object message,Type handler, object context)
+        /// <param name="handlerType">The handler to handle this</param>
+        /// <param name="preHandle"></param>
+        public void HandleTypedMessages(object message, Type handlerType, RecievedMessageData data)
         {
-            var instance = (IMessageHandler)handlerCreator(handler, context);
-            instance.Handle(message);
+
+            var messageScope = serviceProvider.CreateScope().ServiceProvider;
+            try
+            {
+                var c = messageScope.GetService<IRecivedMessageContext>();
+                if (c != null)
+                {
+                    c.RecivedMessageData = data;
+                }
+
+                logger.LogTrace("Starting handler");
+                var instance = (IMessageHandler)messageScope.GetService(handlerType);
+                instance.Handle(message);
+                logger.LogTrace("Message handled");
+            }
+            catch(Exception ex)
+            {
+                logger.LogError(ex, "Unable to handle message");
+            }
+            finally
+            {
+                if (messageScope is IDisposable)
+                {
+                    ((IDisposable)messageScope).Dispose();
+                }
+            }
+
         }
-        
+
         /// <summary>
         /// 
         /// </summary>
@@ -95,6 +127,10 @@ namespace Itas.Infrastructure.Consumer
         #region IDisposable Support
         private bool disposedValue = false; // To detect redundant calls
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="disposing"></param>
         protected virtual void Dispose(bool disposing)
         {
             if (!disposedValue)

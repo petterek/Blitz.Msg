@@ -1,20 +1,20 @@
-using Itas.Infrastructure.Consumer;
-using Itas.Infrastructure.Context;
 using System;
 using System.Collections.Generic;
+using Itas.Infrastructure.MessageHost;
 
 namespace Itas.Infrastructure.Messaging.RabbitConsumer
 {
     public class FakeAdapter : IMessageAdapter
     {
 
-        public FakeAdapter(List<object> messages, ClientContext ctx)
+        public FakeAdapter(List<object> messages)
         {
             this.messages = messages;
-            this.ctx = ctx;
         }
 
-        public event Action<object, Type, object> OnMessage;
+ 
+        public event Action<object, Type, RecievedMessageData> OnMessage;
+
 
         private Dictionary<string, Type> handlerBindings = new Dictionary<string, Type>();
 
@@ -33,7 +33,7 @@ namespace Itas.Infrastructure.Messaging.RabbitConsumer
             {
                 if (handlerBindings.ContainsKey(o.GetType().FullName))
                 {
-                    OnMessage(o, handlerBindings[o.GetType().FullName], ctx);
+                    OnMessage(o, handlerBindings[o.GetType().FullName],new RecievedMessageData(new byte[0])  );
                 }
                 //We are missing support for wildcards.. 
             }
@@ -47,7 +47,7 @@ namespace Itas.Infrastructure.Messaging.RabbitConsumer
         #region IDisposable Support
         private bool disposedValue = false; // To detect redundant calls
         private readonly List<object> messages;
-        private readonly ClientContext ctx;
+        //private readonly ClientContext ctx;
 
         protected virtual void Dispose(bool disposing)
         {

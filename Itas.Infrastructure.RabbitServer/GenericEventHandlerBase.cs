@@ -1,4 +1,5 @@
-namespace Itas.Infrastructure.Consumer
+
+namespace Itas.Infrastructure.MessageHost
 {
     /// <summary>
     /// Inherit from this to handle generic messages.. 

@@ -1,4 +1,4 @@
-using Itas.Infrastructure.Context;
+
 using RabbitMQ.Client;
 using System;
 using System.Collections.Generic;

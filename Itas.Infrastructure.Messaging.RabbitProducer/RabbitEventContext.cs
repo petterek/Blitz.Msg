@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 
 namespace Itas.Infrastructure.Messaging.RabbitProducer
 {
@@ -7,10 +8,7 @@ namespace Itas.Infrastructure.Messaging.RabbitProducer
     /// </summary>
     public class RabbitEventContext
     {
-        public Guid CorrelationId;
-        public Guid CustomerId;
-        public Guid UserId;
-
+        public Guid CorrelationId { get; set; }
+        public Dictionary<string, string> ContextValues = new Dictionary<string, string>();
     }
-
 }

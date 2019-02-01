@@ -4,107 +4,121 @@
         <name>Itas.Infrastructure.MessageHost</name>
     </assembly>
     <members>
-        <member name="T:Itas.Infrastructure.Consumer.MessageHandlerEngine">
+        <member name="T:Itas.Infrastructure.MessageHost.MessageHandlerEngine">
             <summary>
             
             </summary>
         </member>
-        <member name="M:Itas.Infrastructure.Consumer.MessageHandlerEngine.#ctor(Itas.Infrastructure.Consumer.IMessageAdapter,System.Func{System.Type,System.Object,System.Object})">
+        <member name="M:Itas.Infrastructure.MessageHost.MessageHandlerEngine.#ctor(Itas.Infrastructure.MessageHost.IMessageAdapter,System.IServiceProvider,Microsoft.Extensions.Logging.ILogger{Itas.Infrastructure.MessageHost.MessageHandlerEngine})">
             <summary>
             
             </summary>
-            <param name="handlerCreator"></param>
             <param name="producer"></param>
+            <param name="serviceProvider"></param>
+            <param name="logger"></param>
         </member>
-        <member name="M:Itas.Infrastructure.Consumer.MessageHandlerEngine.AttachMessageHandler``2">
+        <member name="M:Itas.Infrastructure.MessageHost.MessageHandlerEngine.AttachMessageHandler``2">
             <summary>
             
             </summary>
             <typeparam name="TMessage"></typeparam>
             <typeparam name="TMessageHandler"></typeparam>
         </member>
-        <member name="M:Itas.Infrastructure.Consumer.MessageHandlerEngine.AttachGenericMessageHandler``1(System.String)">
+        <member name="M:Itas.Infrastructure.MessageHost.MessageHandlerEngine.AttachMessageHandler(System.Type,System.Type)">
+            <summary>
+            
+            </summary>
+            <param name="message"></param>
+            <param name="messageHandler"></param>
+        </member>
+        <member name="M:Itas.Infrastructure.MessageHost.MessageHandlerEngine.AttachGenericMessageHandler``1(System.String)">
             <summary>
             
             </summary>
             <typeparam name="TMessageHandler"></typeparam>
             <param name="messageName"></param>
         </member>
-        <member name="M:Itas.Infrastructure.Consumer.MessageHandlerEngine.HandleTypedMessages(System.Object,System.Type,System.Object)">
+        <member name="M:Itas.Infrastructure.MessageHost.MessageHandlerEngine.HandleTypedMessages(System.Object,System.Type,Itas.Infrastructure.MessageHost.RecievedMessageData)">
             <summary>
             
             </summary>
             <param name="message">The message revieved</param>
-            <param name="handler">The handler to handle this</param>
-            <param name="context">The object holding the context for this call</param>
+            <param name="handlerType">The handler to handle this</param>
+            <param name="preHandle"></param>
         </member>
-        <member name="M:Itas.Infrastructure.Consumer.MessageHandlerEngine.StartServer">
+        <member name="M:Itas.Infrastructure.MessageHost.MessageHandlerEngine.StartServer">
             <summary>
             
             </summary>
         </member>
-        <member name="M:Itas.Infrastructure.Consumer.MessageHandlerEngine.StopServer">
+        <member name="M:Itas.Infrastructure.MessageHost.MessageHandlerEngine.StopServer">
             <summary>
             
             </summary>
         </member>
-        <member name="T:Itas.Infrastructure.Consumer.GenericMessageHandlerBase">
+        <member name="M:Itas.Infrastructure.MessageHost.MessageHandlerEngine.Dispose(System.Boolean)">
+            <summary>
+            
+            </summary>
+            <param name="disposing"></param>
+        </member>
+        <member name="T:Itas.Infrastructure.MessageHost.GenericMessageHandlerBase">
             <summary>
             Inherit from this to handle generic messages.. 
             </summary>
         </member>
-        <member name="T:Itas.Infrastructure.Consumer.MessageHandler`1">
+        <member name="T:Itas.Infrastructure.MessageHost.MessageHandler`1">
             <summary>
             Use this clss as the baseclass for your handlers. 
             </summary>
             <typeparam name="T"></typeparam>
         </member>
-        <member name="M:Itas.Infrastructure.Consumer.MessageHandler`1.Handle(System.Object)">
+        <member name="M:Itas.Infrastructure.MessageHost.MessageHandler`1.Handle(System.Object)">
             <summary>
             
             </summary>
             <param name="param"></param>
         </member>
-        <member name="M:Itas.Infrastructure.Consumer.MessageHandler`1.Handle(`0)">
+        <member name="M:Itas.Infrastructure.MessageHost.MessageHandler`1.Handle(`0)">
             <summary>
             Must be overridden in your class. This is where you handle your event.. 
             </summary>
             <param name="param"></param>
         </member>
-        <member name="T:Itas.Infrastructure.Consumer.IMessageHandler">
+        <member name="T:Itas.Infrastructure.MessageHost.IMessageHandler">
             <summary>
             
             </summary>
         </member>
-        <member name="M:Itas.Infrastructure.Consumer.IMessageHandler.Handle(System.Object)">
+        <member name="M:Itas.Infrastructure.MessageHost.IMessageHandler.Handle(System.Object)">
             <summary>
             Called internaly only.
             </summary>
             <param name="param"></param>
         </member>
-        <member name="T:Itas.Infrastructure.Consumer.IMessageAdapter">
+        <member name="T:Itas.Infrastructure.MessageHost.IMessageAdapter">
             <summary>
             
             </summary>
         </member>
-        <member name="E:Itas.Infrastructure.Consumer.IMessageAdapter.OnMessage">
+        <member name="E:Itas.Infrastructure.MessageHost.IMessageAdapter.OnMessage">
             <summary>
             First argument should be the message,second is the handlertype for this message, and the third is the context. 
             The context is injected into the Container when the handler is created.
             
             </summary>
         </member>
-        <member name="M:Itas.Infrastructure.Consumer.IMessageAdapter.StartAdapter">
+        <member name="M:Itas.Infrastructure.MessageHost.IMessageAdapter.StartAdapter">
             <summary>
             
             </summary>
         </member>
-        <member name="M:Itas.Infrastructure.Consumer.IMessageAdapter.StopAdapter">
+        <member name="M:Itas.Infrastructure.MessageHost.IMessageAdapter.StopAdapter">
             <summary>
             
             </summary>
         </member>
-        <member name="M:Itas.Infrastructure.Consumer.IMessageAdapter.Bind(System.String,System.Type,System.Type)">
+        <member name="M:Itas.Infrastructure.MessageHost.IMessageAdapter.Bind(System.String,System.Type,System.Type)">
             <summary>
             
             </summary>
@@ -112,24 +126,48 @@
             <param name="messageType"></param>
             <param name="handler"></param>
         </member>
-        <member name="T:Itas.Infrastructure.Consumer.RecievedMessageData">
+        <member name="T:Itas.Infrastructure.MessageHost.IRecivedMessageContext">
             <summary>
             
             </summary>
         </member>
-        <member name="M:Itas.Infrastructure.Consumer.RecievedMessageData.#ctor(System.Byte[],System.Collections.Generic.IDictionary{System.String,System.Object})">
+        <member name="P:Itas.Infrastructure.MessageHost.IRecivedMessageContext.RecivedMessageData">
+            <summary>
+            
+            </summary>
+        </member>
+        <member name="T:Itas.Infrastructure.MessageHost.MessageContextHolder">
+            <summary>
+            
+            </summary>
+        </member>
+        <member name="P:Itas.Infrastructure.MessageHost.MessageContextHolder.RecivedMessageData">
+            <summary>
+            
+            </summary>
+        </member>
+        <member name="T:Itas.Infrastructure.MessageHost.RecievedMessageData">
+            <summary>
+            
+            </summary>
+        </member>
+        <member name="M:Itas.Infrastructure.MessageHost.RecievedMessageData.#ctor">
+            <summary>
+            
+            </summary>
+        </member>
+        <member name="M:Itas.Infrastructure.MessageHost.RecievedMessageData.#ctor(System.Byte[])">
             <summary>
             
             </summary>
             <param name="payload"></param>
-            <param name="attributes"></param>
         </member>
-        <member name="P:Itas.Infrastructure.Consumer.RecievedMessageData.Payload">
+        <member name="P:Itas.Infrastructure.MessageHost.RecievedMessageData.Payload">
             <summary>
             
             </summary>
         </member>
-        <member name="P:Itas.Infrastructure.Consumer.RecievedMessageData.Attributes">
+        <member name="P:Itas.Infrastructure.MessageHost.RecievedMessageData.Attributes">
             <summary>
             
             </summary>

@@ -1,5 +1,4 @@
-using Itas.Infrastructure.Consumer;
-using Itas.Infrastructure.Context;
+using Itas.Infrastructure.MessageHost;
 using Itas.Infrastructure.Messaging.RabbitConsumer;
 using NUnit.Framework;
 using System;
@@ -50,15 +49,18 @@ namespace RabbitHost.Test
         public void SetupLooksGood()
         {
             var container = new SimpleFactory.Container();
-            container.Register<MyHandler>().AsSingleton();
+            container.Register<MyHandler>().Singleton();
 
             container.Register<MyGenericEventHandler>();
 
             IMessageAdapter adapter;
 
-            adapter = new FakeAdapter(new List<object> { new SomethingHasHappend() }, new ClientContext { });
+            adapter = new FakeAdapter(new List<object> { new SomethingHasHappend() });
 
-            var Server = new MessageHandlerEngine(adapter, (theType, ctx) => container.CreateAnonymousInstance(theType, ctx));
+            var Server = new MessageHandlerEngine(adapter,
+                null,
+                null
+                );
 
             Server.AttachMessageHandler<SomethingHasHappend, MyHandler>();
             Server.AttachGenericMessageHandler<MyGenericEventHandler>("#");
@@ -70,8 +72,8 @@ namespace RabbitHost.Test
 
             adapter.StopAdapter();
 
-            Assert.IsNotNull(((MyHandler)container.CreateInstance<MessageHandler<SomethingHasHappend>>()).input);
-            Assert.AreEqual(1, ((MyHandler)container.CreateInstance<MessageHandler<SomethingHasHappend>>()).Counter);
+            Assert.IsNotNull(container.CreateInstance<MyHandler>().input);
+            Assert.AreEqual(1, container.CreateInstance<MyHandler>().Counter);
         }
 
     }
@@ -89,19 +91,18 @@ namespace RabbitHost.Test
         {
 
         }
+
+        
     }
 
 
     public class MyHandler : MessageHandler<SomethingHasHappend>
     {
-        private readonly ClientContext ctx;
+
         public SomethingHasHappend input;
         public int Counter = 0;
 
-        //public MyHandler(ClientContext ctx)
-        //{
-        //    this.ctx = ctx;
-        //}
+
 
         public override void Handle(SomethingHasHappend param)
         {

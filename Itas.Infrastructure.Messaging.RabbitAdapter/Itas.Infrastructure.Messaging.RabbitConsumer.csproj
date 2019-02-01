@@ -3,16 +3,18 @@
   <PropertyGroup>
     <TargetFramework>netstandard2.0</TargetFramework>
     <LangVersion>7.3</LangVersion>
+    <Version>1.0.6</Version>
+    <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="Itas.Infrastructure.Context" Version="1.3.3" />
-    <PackageReference Include="miniJson" Version="1.1.1" />
+    <PackageReference Include="Microsoft.Extensions.Logging.Abstractions" Version="2.2.0" />
     <PackageReference Include="RabbitMQ.Client" Version="5.1.0" />
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\Itas.Infrastructure.RabbitServer\Itas.Infrastructure.Consumer.csproj" />
+    <ProjectReference Include="..\Itas.Infrastructure.Messaging.Shared\Itas.Infrastructure.Messaging.Shared.csproj" />
+    <ProjectReference Include="..\Itas.Infrastructure.RabbitServer\Itas.Infrastructure.MessageHost.csproj" />
   </ItemGroup>
 
 </Project>
