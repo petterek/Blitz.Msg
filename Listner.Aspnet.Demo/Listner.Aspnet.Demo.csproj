@@ -3,6 +3,7 @@
   <PropertyGroup>
     <TargetFramework>netcoreapp2.2</TargetFramework>
     <AspNetCoreHostingModel>InProcess</AspNetCoreHostingModel>
+    <TypeScriptToolsVersion>3.1</TypeScriptToolsVersion>
   </PropertyGroup>
 
   <ItemGroup>
@@ -13,6 +14,10 @@
   <ItemGroup>
     <ProjectReference Include="..\Demo.Events\Demo.Events.csproj" />
     <ProjectReference Include="..\Itas.Infrastructure.Messaging.AspnetcoreExtension\Itas.Infrastructure.Messaging.AspnetcoreExtension.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Include="wwwroot\Default.html" />
   </ItemGroup>
 
 </Project>

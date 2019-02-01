@@ -6,6 +6,7 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <PackageReference Include="Itas.Infrastructure.Context" Version="4.1.0" />
     <PackageReference Include="miniJson" Version="1.4.0" />
     <PackageReference Include="SimpleFactory" Version="3.0.0" />
   </ItemGroup>

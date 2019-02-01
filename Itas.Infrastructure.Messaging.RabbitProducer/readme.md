@@ -1,0 +1,2 @@
+﻿# Publishing messages  to Rabbit. 
+

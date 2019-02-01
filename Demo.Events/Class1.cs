@@ -8,4 +8,11 @@ namespace Demo.Events
         public DateTime When = DateTime.UtcNow;
         public string Message;
     }
+
+
+
+    public class SomethingElse
+    {
+        public int Value;
+    }
 }
