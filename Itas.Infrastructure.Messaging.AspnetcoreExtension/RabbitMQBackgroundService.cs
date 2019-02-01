@@ -1,10 +1,6 @@
 ﻿using Itas.Infrastructure.MessageHost;
-using Itas.Infrastructure.Messaging.RabbitConsumer;
-using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
-using System;
-using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 
@@ -28,8 +24,14 @@ namespace Itas.Infrastructure.Messaging.AspnetcoreExtension
 
             stoppingToken.Register(Shutdown);
             
-            messageConfig.MessageHandlers.ToList().ForEach(kv => {
-                server.AttachMessageHandler(kv.Key, kv.Value);
+            messageConfig.MessageHandlers.ForEach(kv => {
+                if(kv.Message == null)
+                {
+                    server.AttachGenericMessageHandler(kv.BindingKey, kv.Handler);
+                }else
+                {
+                    server.AttachMessageHandler(kv.Message, kv.Handler);
+                }
             });
 
             server.StartServer();

@@ -38,6 +38,13 @@
             <typeparam name="TMessageHandler"></typeparam>
             <param name="messageName"></param>
         </member>
+        <member name="M:Itas.Infrastructure.MessageHost.MessageHandlerEngine.AttachGenericMessageHandler(System.String,System.Type)">
+            <summary>
+            
+            </summary>
+            <param name="messageName"></param>
+            <param name="handlerType"></param>
+        </member>
         <member name="M:Itas.Infrastructure.MessageHost.MessageHandlerEngine.HandleTypedMessages(System.Object,System.Type,Itas.Infrastructure.MessageHost.RecievedMessageData)">
             <summary>
             
@@ -161,6 +168,21 @@
             
             </summary>
             <param name="payload"></param>
+        </member>
+        <member name="P:Itas.Infrastructure.MessageHost.RecievedMessageData.MessageName">
+            <summary>
+            
+            </summary>
+        </member>
+        <member name="P:Itas.Infrastructure.MessageHost.RecievedMessageData.Timestamp">
+            <summary>
+            
+            </summary>
+        </member>
+        <member name="P:Itas.Infrastructure.MessageHost.RecievedMessageData.CorrelationId">
+            <summary>
+            
+            </summary>
         </member>
         <member name="P:Itas.Infrastructure.MessageHost.RecievedMessageData.Payload">
             <summary>
