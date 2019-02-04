@@ -25,6 +25,22 @@ namespace Itas.Infrastructure.MessageHost
             Payload = payload;
         }
 
+
+        /// <summary>
+        /// 
+        /// </summary>
+        public string MessageName { get; protected set; }
+        
+        /// <summary>
+        /// 
+        /// </summary>
+        public long Timestamp { get; protected set; }
+        
+        /// <summary>
+        /// 
+        /// </summary>
+        public string CorrelationId { get; protected set; }
+
         /// <summary>
         /// 
         /// </summary>

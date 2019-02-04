@@ -27,6 +27,7 @@ namespace Listner.Aspnet.Demo
                 {
                     c.ConsumeMessage<SomethingOccured, SomethingOccuredHandler>();
                     c.ConsumeMessage<SomethingElse, SomethingElseHappend>();
+                    c.ConsumeAnonymouseMessage<MyAnonymousHandler>("#");
                 }
             );
         }
@@ -48,7 +49,22 @@ namespace Listner.Aspnet.Demo
         }
     
     }
-    
+
+    internal class MyAnonymousHandler : GenericMessageHandlerBase
+    {
+        readonly ILogger<MyAnonymousHandler> logger;
+
+        public MyAnonymousHandler(ILogger<MyAnonymousHandler> logger)
+        {
+            this.logger = logger;
+        }
+
+        public override void Handle(RecievedMessageData param)
+        {
+            logger.LogInformation("Handled generic message--" + param.MessageName);
+        }
+    }
+
     public class SomethingOccuredHandler : MessageHandler<SomethingOccured>
     {
         readonly ILogger<SomethingOccuredHandler> logger;

@@ -23,7 +23,7 @@ namespace Itas.Infrastructure.MessageHost
             }
             return HandlerTypes[messageType];
         }
-                
+
         readonly ILogger<MessageHandlerEngine> logger;
         readonly IServiceProvider serviceProvider;
 
@@ -33,7 +33,7 @@ namespace Itas.Infrastructure.MessageHost
         /// <param name="producer"></param>
         /// <param name="serviceProvider"></param>
         /// <param name="logger"></param>
-        public MessageHandlerEngine(IMessageAdapter producer,IServiceProvider serviceProvider, ILogger<MessageHandlerEngine> logger)
+        public MessageHandlerEngine(IMessageAdapter producer, IServiceProvider serviceProvider, ILogger<MessageHandlerEngine> logger)
         {
             this.serviceProvider = serviceProvider;
             this.logger = logger;
@@ -60,7 +60,7 @@ namespace Itas.Infrastructure.MessageHost
         {
             producer.Bind(message.FullName, message, messageHandler);
         }
-        
+
         /// <summary>
         /// 
         /// </summary>
@@ -68,9 +68,20 @@ namespace Itas.Infrastructure.MessageHost
         /// <param name="messageName"></param>
         public void AttachGenericMessageHandler<TMessageHandler>(string messageName) where TMessageHandler : GenericMessageHandlerBase
         {
-            producer.Bind(messageName, null, typeof(TMessageHandler));
+            AttachGenericMessageHandler(messageName, typeof(TMessageHandler));
         }
-        
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="messageName"></param>
+        /// <param name="handlerType"></param>
+        public void AttachGenericMessageHandler(string messageName, Type handlerType)
+        {
+            producer.Bind(messageName, null, handlerType);
+        }
+
+
         /// <summary>
         /// 
         /// </summary>
@@ -94,7 +105,7 @@ namespace Itas.Infrastructure.MessageHost
                 instance.Handle(message);
                 logger.LogTrace("Message handled");
             }
-            catch(Exception ex)
+            catch (Exception ex)
             {
                 logger.LogError(ex, "Unable to handle message");
             }

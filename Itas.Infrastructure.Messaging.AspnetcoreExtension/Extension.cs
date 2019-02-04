@@ -27,9 +27,9 @@ namespace Itas.Infrastructure.Messaging.AspnetcoreExtension
 
             serviceCollection.AddScoped<IRecivedMessageContext, MessageContextHolder>();
 
-            cnfg.MessageHandlers.ToList().ForEach(kv =>
+            cnfg.MessageHandlers.ForEach(kv =>
             {
-                serviceCollection.AddScoped(kv.Value);
+                serviceCollection.AddScoped(kv.Handler);
             });
 
             serviceCollection.AddSingleton(cnfg);
