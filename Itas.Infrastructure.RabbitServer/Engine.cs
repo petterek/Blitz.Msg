@@ -97,7 +97,7 @@ namespace Itas.Infrastructure.MessageHost
             catch(Exception ex)
             {
                 logger.LogError(ex, "Unable to handle message");
-                throw ex;
+                throw;
             }
             finally
             {
